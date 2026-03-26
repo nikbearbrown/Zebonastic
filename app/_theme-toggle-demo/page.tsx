@@ -2,7 +2,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Theme Toggle Demo | Irreducibly Human",
+  title: "Theme Toggle Demo | Zebonastic",
   description: "Coming soon.",
   robots: { index: false, follow: false },
 }

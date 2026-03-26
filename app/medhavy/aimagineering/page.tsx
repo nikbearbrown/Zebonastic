@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/primary-button";
 import SecondaryButton from "@/components/ui/secondary-button";
 
 export const metadata: Metadata = {
-  title: "AIMagineering: Creative Intelligence - Irreducibly Human",
+  title: "AIMagineering: Creative Intelligence - Zebonastic",
   description: "The Full Design Pipeline. Tier 4 depth. Empathize, Define, Ideate, Prototype, Test, Commit — the Commit stage that Design Thinking omits.",
 };
 
@@ -23,7 +23,7 @@ export default function AIMagineeringPage() {
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/videoseries?si=caS7A9UMCFewuuRB&amp;list=PLgOGgHS58rB-sBjm4oEfMfFXcYZf89IDo?enablejsapi=1"
-              title="AIMagineering - Irreducibly Human"
+              title="AIMagineering - Zebonastic"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen

@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/primary-button";
 import SecondaryButton from "@/components/ui/secondary-button";
 
 export const metadata: Metadata = {
-  title: "BotSpeak: Fluency in AI Communication - Irreducibly Human",
+  title: "BotSpeak: Fluency in AI Communication - Zebonastic",
   description: "The Nine Pillars of AI Fluency. Tier 4 depth. Five Modes framework, tier taxonomy, AI collaboration as professional competency. The series entry point.",
 };
 
@@ -23,7 +23,7 @@ export default function BotSpeakPage() {
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/videoseries?si=caS7A9UMCFewuuRB&amp;list=PLgOGgHS58rB-sBjm4oEfMfFXcYZf89IDo?enablejsapi=1"
-              title="BotSpeak - Irreducibly Human"
+              title="BotSpeak - Zebonastic"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Courses - Irreducibly Human",
-  description: "The Irreducibly Human course sequence from Bear Brown & Company. Each course develops a specific tier of human intelligence that AI cannot replicate.",
+  title: "Courses - Zebonastic",
+  description: "The Zebonastic course sequence from Bear Brown & Company. Each course develops a specific tier of human intelligence that AI cannot replicate.",
 };
 
 const COURSES = [
@@ -81,7 +81,7 @@ export default function CoursesPage() {
           <iframe
             className="absolute top-0 left-0 w-full h-full"
             src="https://www.youtube.com/embed/R2X2-_USSVY?si=mIyL7XqejJGbtizL"
-            title="Irreducibly Human"
+            title="Zebonastic"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen

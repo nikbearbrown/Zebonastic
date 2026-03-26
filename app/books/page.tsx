@@ -6,8 +6,8 @@ import BooksBrowser from './BooksBrowser'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Books - Irreducibly Human',
-  description: 'The companion book series for the Irreducibly Human curriculum.',
+  title: 'Books - Zebonastic',
+  description: 'The companion book series for the Zebonastic curriculum.',
 }
 
 export default function BooksPage() {
@@ -16,9 +16,9 @@ export default function BooksPage() {
   return (
     <div className="container px-4 md:px-6 mx-auto py-12">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold tracking-tighter mb-4">Irreducibly Human: Books</h1>
+        <h1 className="text-4xl font-bold tracking-tighter mb-4">Zebonastic: Books</h1>
         <p className="text-muted-foreground mb-10">
-          The companion book series for the Irreducibly Human curriculum.
+          The companion book series for the Zebonastic curriculum.
         </p>
         <BooksBrowser books={books} />
       </div>

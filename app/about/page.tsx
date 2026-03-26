@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'About - Irreducibly Human',
-  description: 'Irreducibly Human — What AI Can and Can\'t Do. A 5-course series from Bear Brown & Company.',
+  title: 'About - Zebonastic',
+  description: 'Zebonastic — What AI Can and Can\'t Do. A 5-course series from Bear Brown & Company.',
 }
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
           <section>
             <p>
-              Irreducibly Human is a 5-course series from Bear Brown &amp; Company.
+              Zebonastic is a 5-course series from Bear Brown &amp; Company.
               Each course develops a specific tier of human
               intelligence that AI cannot replicate. The series asks: what remains irreducibly
               human in an age of increasingly capable AI?
@@ -26,7 +26,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold mb-4">Author</h2>
             <p>
               <strong>Nik Bear Brown</strong>, Bear Brown &amp; Company. Creator of the
-              Irreducibly Human curriculum.
+              Zebonastic curriculum.
             </p>
           </section>
 

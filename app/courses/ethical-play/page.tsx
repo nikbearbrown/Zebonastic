@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/primary-button";
 import SecondaryButton from "@/components/ui/secondary-button";
 
 export const metadata: Metadata = {
-  title: "Ethical Play and Moral Imagination - Irreducibly Human",
+  title: "Ethical Play and Moral Imagination - Zebonastic",
   description: "Tier 3 depth. Ethical frameworks as game mechanics. The AI Ethical Auditor session. The gap between structural analysis and felt moral weight.",
 };
 
@@ -23,7 +23,7 @@ export default function EthicalPlayPage() {
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/videoseries?si=caS7A9UMCFewuuRB&amp;list=PLgOGgHS58rB-sBjm4oEfMfFXcYZf89IDo?enablejsapi=1"
-              title="Ethical Play - Irreducibly Human"
+              title="Ethical Play - Zebonastic"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen

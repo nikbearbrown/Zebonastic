@@ -6,7 +6,7 @@ import NotesBrowser from './NotesBrowser'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Notes - Irreducibly Human',
+  title: 'Notes - Zebonastic',
   description: 'Machines are superhuman at pattern recognition, fact retrieval, and syntactic correctness. Everything else is irreducibly human. Here is the curriculum for everything else.',
 }
 
@@ -16,7 +16,7 @@ export default function NotesPage() {
   return (
     <div className="container px-4 md:px-6 mx-auto py-12">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-bold tracking-tighter mb-4">Irreducibly Human: Notes</h1>
+        <h1 className="text-4xl font-bold tracking-tighter mb-4">Zebonastic: Notes</h1>
         <p className="text-muted-foreground mb-10">
           Machines are superhuman at pattern recognition, fact retrieval, and syntactic correctness. Everything else is irreducibly human. Here is the curriculum for everything else.
         </p>

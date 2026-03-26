@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/primary-button";
 import SecondaryButton from "@/components/ui/secondary-button";
 
 export const metadata: Metadata = {
-  title: "Causal Reasoning and World Modeling - Irreducibly Human",
+  title: "Causal Reasoning and World Modeling - Zebonastic",
   description: "Tier 5 depth. DAG construction, the backdoor criterion, and the identification layer. Students build defensible causal models.",
 };
 
@@ -23,7 +23,7 @@ export default function CausalReasoningPage() {
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/videoseries?si=caS7A9UMCFewuuRB&amp;list=PLgOGgHS58rB-sBjm4oEfMfFXcYZf89IDo?enablejsapi=1"
-              title="Causal Reasoning - Irreducibly Human"
+              title="Causal Reasoning - Zebonastic"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen

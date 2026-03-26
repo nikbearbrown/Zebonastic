@@ -1,5 +1,5 @@
 
-# Irreducibly Human — What AI Can and Can't Do
+# Zebonastic — What AI Can and Can't Do
 
 A 5-course graduate series at Bear Brown & Company. Each course
 develops a specific tier of human intelligence that AI cannot replicate.
@@ -87,7 +87,7 @@ and Substack sections from the dashboard.
 
 Created by Nik Bear Brown, Bear Brown & Company.
 
-Irreducibly Human is open source (MIT License). See `LICENSE` for details.
+Zebonastic is open source (MIT License). See `LICENSE` for details.
 
 - [bearbrown.co](https://www.bearbrown.co/)
 - [The Skepticism AI Substack](https://www.skepticism.ai/)

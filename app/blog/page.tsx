@@ -5,7 +5,7 @@ import BlogFeed from './BlogFeed'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Blog - Irreducibly Human',
+  title: 'Blog - Zebonastic',
   description: "Writing on what AI can and can't do and what that means for education.",
 }
 

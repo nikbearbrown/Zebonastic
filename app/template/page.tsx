@@ -95,7 +95,7 @@ export default function TemplatePage() {
             </div>
             
             <div className="mt-8 text-center">
-              <h3 className="text-lg font-semibold mb-2">Contact Irreducibly Human</h3>
+              <h3 className="text-lg font-semibold mb-2">Contact Zebonastic</h3>
               <div className="flex flex-wrap justify-center gap-4 mt-4">
                 <a
                   href="mailto:bear@bearbrown.co"

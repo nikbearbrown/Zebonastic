@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/primary-button";
 import SecondaryButton from "@/components/ui/secondary-button";
 
 export const metadata: Metadata = {
-  title: "Embodied Teaching and Mentorship - Irreducibly Human",
+  title: "Embodied Teaching and Mentorship - Zebonastic",
   description: "Tier 2 depth. AI integration planning for domains where learning happens in the body. The handoff vs. protect distinction.",
 };
 
@@ -23,7 +23,7 @@ export default function EmbodiedTeachingPage() {
             <iframe
               className="absolute top-0 left-0 w-full h-full"
               src="https://www.youtube.com/embed/videoseries?si=caS7A9UMCFewuuRB&amp;list=PLgOGgHS58rB-sBjm4oEfMfFXcYZf89IDo?enablejsapi=1"
-              title="Embodied Teaching - Irreducibly Human"
+              title="Embodied Teaching - Zebonastic"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen

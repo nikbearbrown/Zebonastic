@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - Irreducibly Human',
-  description: 'Terms of Service for Irreducibly Human and irreduciblyhuman.xyz',
+  title: 'Terms of Service - Zebonastic',
+  description: 'Terms of Service for Zebonastic and irreduciblyhuman.xyz',
 }
 
 export default function TermsOfServicePage() {
@@ -24,7 +24,7 @@ export default function TermsOfServicePage() {
               our website.
             </p>
             <ul className="list-none pl-0 mt-4 space-y-1 text-base">
-              <li><strong>Company:</strong> Irreducibly Human</li>
+              <li><strong>Company:</strong> Zebonastic</li>
               <li><strong>Address:</strong> 30 N Gould St Ste N, Sheridan, WY 82801</li>
               <li><strong>Email:</strong>{' '}
                 <a href="mailto:bear@bearbrown.co" className="text-primary hover:underline">bear@bearbrown.co</a>
@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">2. Website Purpose</h2>
             <p>
-              Irreducibly Human provides educational content and course materials. The irreduciblyhuman.xyz website serves as an informational resource, tool directory,
+              Zebonastic provides educational content and course materials. The irreduciblyhuman.xyz website serves as an informational resource, tool directory,
               and professional contact point. Content on this website is intended to provide general information about our
               services and activities, and does not constitute professional advice.
             </p>
@@ -44,8 +44,8 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">3. Educational Services</h2>
             <p>
-              Irreducibly Human offers educational resources, course materials, and research content related to AI and human intelligence. All engagements are governed by
-              separate agreements between Irreducibly Human and the participant. These Terms apply to use of this
+              Zebonastic offers educational resources, course materials, and research content related to AI and human intelligence. All engagements are governed by
+              separate agreements between Zebonastic and the participant. These Terms apply to use of this
               website only and do not supersede any engagement agreement.
             </p>
           </section>
@@ -54,9 +54,9 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">4. Intellectual Property</h2>
             <p>
               All content on this website, including text, graphics, logos, images, audio, newsletter articles, tools,
-              and software, is the property of Irreducibly Human or its content suppliers and is protected by
+              and software, is the property of Zebonastic or its content suppliers and is protected by
               applicable copyright laws. The compilation of all content on this website is the exclusive property
-              of Irreducibly Human.
+              of Zebonastic.
             </p>
             <p className="mt-4">
               Newsletter content originally published on Substack is displayed with attribution to its original source.
@@ -80,7 +80,7 @@ export default function TermsOfServicePage() {
             </ul>
             <p className="mt-4">
               This license shall automatically terminate if you violate any of these restrictions and may be terminated
-              by Irreducibly Human at any time.
+              by Zebonastic at any time.
             </p>
           </section>
 
@@ -104,7 +104,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">7. Newsletter Content</h2>
             <p>
               Newsletter articles displayed on this website are imported from Substack publications operated by
-              Irreducibly Human. These articles are provided for convenient reading and are attributed to their original
+              Zebonastic. These articles are provided for convenient reading and are attributed to their original
               Substack source. For the most current version of any article, refer to the original Substack publication
               linked on each article page.
             </p>
@@ -114,9 +114,9 @@ export default function TermsOfServicePage() {
             <h2 className="text-2xl font-semibold mb-4">8. Third-Party Services and Links</h2>
             <p>
               This website integrates with and contains links to third-party services including Substack,
-              GitHub, Vercel, Neon, and Anthropic. Irreducibly Human does not guarantee the accuracy,
+              GitHub, Vercel, Neon, and Anthropic. Zebonastic does not guarantee the accuracy,
               relevance, timeliness, or completeness of any information on these external services. Please note that
-              Irreducibly Human is not responsible for the content, privacy practices, or availability of these external
+              Zebonastic is not responsible for the content, privacy practices, or availability of these external
               services. Your use of third-party services is governed by their respective terms.
             </p>
           </section>
@@ -124,15 +124,15 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">9. Disclaimer</h2>
             <p>
-              The materials on Irreducibly Human&apos;s website are provided &ldquo;as is&rdquo; and &ldquo;as available.&rdquo;
-              Irreducibly Human makes no warranties, expressed or implied, and hereby disclaims and negates all other
+              The materials on Zebonastic&apos;s website are provided &ldquo;as is&rdquo; and &ldquo;as available.&rdquo;
+              Zebonastic makes no warranties, expressed or implied, and hereby disclaims and negates all other
               warranties, including without limitation, implied warranties or conditions of merchantability, fitness for
               a particular purpose, or non-infringement of intellectual property or other violation of rights.
             </p>
             <p className="mt-4">
               Content, tools, and recommendations are provided for informational purposes
               only. They should not be relied upon as the sole basis for business, technical, or professional decisions.
-              Irreducibly Human does not warrant that the website will be uninterrupted, error-free, or free of harmful
+              Zebonastic does not warrant that the website will be uninterrupted, error-free, or free of harmful
               components.
             </p>
           </section>
@@ -140,9 +140,9 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">10. Limitations</h2>
             <p>
-              In no event shall Irreducibly Human or its partners be liable for any damages (including, without
+              In no event shall Zebonastic or its partners be liable for any damages (including, without
               limitation, damages for loss of data or profit, or due to business interruption) arising out of the use
-              or inability to use the materials on this website, even if Irreducibly Human or an authorised representative
+              or inability to use the materials on this website, even if Zebonastic or an authorised representative
               has been notified orally or in writing of the possibility of such damage.
             </p>
           </section>
@@ -150,7 +150,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">11. Indemnification</h2>
             <p>
-              You agree to indemnify and hold harmless Irreducibly Human, its partners, and its affiliates from any
+              You agree to indemnify and hold harmless Zebonastic, its partners, and its affiliates from any
               claims, damages, losses, or expenses (including reasonable attorneys&apos; fees) arising from your use
               of the website or violation of these Terms.
             </p>
@@ -159,9 +159,9 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">12. Revisions and Errata</h2>
             <p>
-              The materials appearing on Irreducibly Human&apos;s website could include technical, typographical, or
-              photographic errors. Irreducibly Human does not warrant that any of the materials on its website are accurate,
-              complete, or current. Irreducibly Human may make changes to the materials contained on its website at any time
+              The materials appearing on Zebonastic&apos;s website could include technical, typographical, or
+              photographic errors. Zebonastic does not warrant that any of the materials on its website are accurate,
+              complete, or current. Zebonastic may make changes to the materials contained on its website at any time
               without notice.
             </p>
           </section>
@@ -178,7 +178,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">14. Modifications to Terms of Service</h2>
             <p>
-              Irreducibly Human may revise these Terms of Service at any time without notice. By using this website, you
+              Zebonastic may revise these Terms of Service at any time without notice. By using this website, you
               are agreeing to be bound by the then-current version of these Terms. Changes take effect immediately upon
               posting. We encourage you to review this page periodically.
             </p>
@@ -187,7 +187,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">15. Contact</h2>
             <p>
-              If you have any questions about these Terms, please contact Irreducibly Human:
+              If you have any questions about these Terms, please contact Zebonastic:
             </p>
             <ul className="list-none pl-0 mt-4 space-y-1 text-base">
               <li><strong>Email:</strong>{' '}
