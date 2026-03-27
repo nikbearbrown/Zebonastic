@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Blog - Zebonastic',
-  description: "Writing on what AI can and can't do and what that means for education.",
+  description: "Writing on what AI can and can't do for games.",
 }
 
 export default async function BlogPage() {
@@ -36,7 +36,7 @@ export default async function BlogPage() {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold tracking-tighter mb-4">Blog</h1>
         <p className="text-muted-foreground mb-10">
-          Writing on what AI can and can't do and what that means for education.
+          Writing on what AI can and can't do for games.
         </p>
         <BlogFeed posts={posts} />
       </div>
