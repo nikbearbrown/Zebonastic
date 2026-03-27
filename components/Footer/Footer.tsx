@@ -77,6 +77,14 @@ export default function Footer() {
                 YouTube
               </a>
               <a
+                href="https://www.instagram.com/zebonastic.ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Instagram
+              </a>
+              <a
                 href="https://open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6?si=9Fx2UusBQHi3tTyVEAoCDQ"
                 target="_blank"
                 rel="noopener noreferrer"
