@@ -69,7 +69,7 @@ export default function Footer() {
                 Bear Brown &amp; Co
               </a>
               <a
-                href="https://www.youtube.com/@Musinique"
+                href="https://www.youtube.com/@Zebonastic"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"

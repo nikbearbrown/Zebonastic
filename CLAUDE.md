@@ -92,7 +92,7 @@ Teaching is irreducibly human. This course covers presence, improvisation, emoti
 ### Header (`/components/Header/Header.tsx`) — DONE
 - Logo: text-based "Zebonastic" in bold tracking-tighter
 - Nav: Home (`/`) | Courses (`/courses`) | Tools (`/tools`) | Dev (`/dev`) | About (`/about`) | Blog (`/blog`)
-- Social buttons (top right): GitHub (github.com/nikbearbrown/irreducibly-human), Substack (skepticism.ai), YouTube (youtube.com/@Musinique), Spotify (open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6) — black button style
+- Social buttons (top right): GitHub (github.com/nikbearbrown/irreducibly-human), Substack (skepticism.ai), YouTube (youtube.com/@Zebonastic), Spotify (open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6) — black button style
 - Dark/light mode toggle (ThemeToggle component)
 - Mobile hamburger menu with backdrop (lg breakpoint)
 - Sticky, z-50, backdrop-blur
@@ -101,7 +101,7 @@ Teaching is irreducibly human. This course covers presence, improvisation, emoti
 Four-column grid layout:
 - **Program Info:** Zebonastic, Bear Brown & Company, Bear Brown & Company, bear@bearbrown.co
 - **Platform:** Links to Courses, Tools, Blog, About
-- **Connect:** GitHub (github.com/nikbearbrown/irreducibly-human), Substack (skepticism.ai), Bear Brown & Co (bearbrown.co), YouTube (youtube.com/@Musinique), Spotify (open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6)
+- **Connect:** GitHub (github.com/nikbearbrown/irreducibly-human), Substack (skepticism.ai), Bear Brown & Co (bearbrown.co), YouTube (youtube.com/@Zebonastic), Spotify (open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6)
 - **Legal:** Privacy Policy, Cookie Policy, Terms of Service
 - Bottom bar: copyright
 

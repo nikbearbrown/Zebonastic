@@ -18,7 +18,7 @@ const NAV_ITEMS = [
 const SOCIAL_LINKS = [
   { name: 'GitHub', href: 'https://github.com/nikbearbrown/' },
   { name: 'Substack', href: 'https://www.skepticism.ai/' },
-  { name: 'YouTube', href: 'https://www.youtube.com/@Musinique' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@Zebonastic' },
   { name: 'Spotify', href: 'https://open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6?si=9Fx2UusBQHi3tTyVEAoCDQ' },
 ]
 
