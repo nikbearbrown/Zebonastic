@@ -9,11 +9,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: '/trust',
-        destination: '/trust/index.html',
+        destination: '/trust/',
+        permanent: true,
       },
     ]
   },
