@@ -16,6 +16,11 @@ const nextConfig = {
         destination: '/trust/',
         permanent: true,
       },
+      {
+        source: '/anxiety',
+        destination: '/anxiety/',
+        permanent: true,
+      },
     ]
   },
 }
