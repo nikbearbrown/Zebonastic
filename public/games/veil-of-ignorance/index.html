@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Veil of Ignorance</title>
+  <meta name="description" content="An interactive resource allocation game exploring Rawlsian fairness behind the veil of ignorance"/>
+  <meta name="keywords" content="veil of ignorance, Rawls, maximin, fairness, ethics, game theory, ethical play"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f8f7f4; color: #1a1a1a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+    .game-container { max-width: 800px; width: 100%; padding: 2rem 1.5rem; }
+    h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 2rem; }
+    .mechanic-quote { background: #fff; border-left: 3px solid #8B0000; padding: 1rem 1.25rem; margin-bottom: 2rem; font-style: italic; color: #444; font-size: 0.9rem; }
+
+    /* Allocation sliders */
+    .allocation-panel { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .allocation-panel h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+    .budget-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.85rem; color: #666; }
+    .budget-bar .remaining { font-weight: 700; color: #1a1a1a; }
+    .budget-bar .remaining.over { color: #8B0000; }
+    .slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+    .slider-row label { width: 140px; font-size: 0.85rem; font-weight: 500; flex-shrink: 0; }
+    .slider-row input[type="range"] { flex: 1; }
+    .slider-row .value { width: 2rem; text-align: right; font-size: 0.85rem; font-weight: 600; }
+
+    /* Positions grid */
+    .positions-panel { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .positions-panel h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+    .positions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; }
+    .position-card { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; text-align: center; }
+    .position-card .pos-label { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+    .position-card .pos-score { font-size: 1.5rem; font-weight: 700; }
+    .position-card .pos-desc { font-size: 0.75rem; color: #888; margin-top: 0.25rem; }
+    .position-card.worst { border-color: #8B0000; background: #fdf6f6; }
+
+    /* Rawls indicator */
+    .rawls-panel { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; }
+    .rawls-panel h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .indicator { display: flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; }
+    .indicator .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .indicator .dot.pass { background: #86C448; }
+    .indicator .dot.fail { background: #8B0000; }
+    .indicator .label { font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+  <h1>The Veil of Ignorance</h1>
+  <p class="subtitle">Allocate resources before you know which position you'll occupy.</p>
+
+  <div class="mechanic-quote" id="mechanic-quote"></div>
+
+  <div class="allocation-panel">
+    <h2>Resource Allocation</h2>
+    <div class="budget-bar">
+      <span>Budget: <strong>10 points</strong></span>
+      <span>Remaining: <span class="remaining" id="remaining">10</span></span>
+    </div>
+    <div id="sliders"></div>
+  </div>
+
+  <div class="positions-panel">
+    <h2>Positions</h2>
+    <div class="positions-grid" id="positions"></div>
+  </div>
+
+  <div class="rawls-panel">
+    <h2>Rawlsian Maximin Check</h2>
+    <div class="indicator" id="rawls-indicator">
+      <div class="dot fail"></div>
+      <span class="label">Allocate resources to begin.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── GAME CONFIG ── -->
+<script>
+var GAME_CONFIG = {
+  title: "The Veil of Ignorance",
+  budget: 10,
+  rawls_threshold: 6,
+  categories: [
+    { id: "preventive",  name: "Preventive care",  weight: [3, 2, 1, 0, 0] },
+    { id: "emergency",   name: "Emergency care",   weight: [0, 1, 2, 2, 1] },
+    { id: "education",   name: "Health education",  weight: [1, 1, 1, 1, 2] },
+    { id: "nutrition",   name: "Nutrition programs", weight: [0, 0, 1, 2, 3] },
+    { id: "mental",      name: "Mental health",     weight: [1, 1, 1, 1, 1] }
+  ],
+  positions: [
+    { id: "A", label: "Position A", desc: "Wealthy urban" },
+    { id: "B", label: "Position B", desc: "Middle suburban" },
+    { id: "C", label: "Position C", desc: "Working rural" },
+    { id: "D", label: "Position D", desc: "Low-income urban" },
+    { id: "E", label: "Position E", desc: "Poverty rural" }
+  ]
+};
+</script>
+
+<!-- ENGINE CONSTANT — not configurable. Students chose this template
+     to make this argument. This sentence is the engine's, not theirs. -->
+<script>
+var MECHANIC_ARGUMENT = "A system that feels fair to its designer is usually a system the designer expected to navigate from a favorable position.";
+</script>
+
+<script src="user-config.js"></script>
+
+<!-- ── ENGINE ── -->
+<script>
+(function() {
+  // State
+  var state = {
+    allocations: {},
+    scores: [],
+    worstIndex: -1,
+    isMaximin: false
+  };
+
+  // Init allocations to 0
+  GAME_CONFIG.categories.forEach(function(cat) {
+    state.allocations[cat.id] = 0;
+  });
+
+  // Render mechanic argument
+  document.getElementById('mechanic-quote').textContent = MECHANIC_ARGUMENT;
+
+  // Build sliders
+  var slidersEl = document.getElementById('sliders');
+  GAME_CONFIG.categories.forEach(function(cat) {
+    var row = document.createElement('div');
+    row.className = 'slider-row';
+    row.innerHTML =
+      '<label>' + cat.name + '</label>' +
+      '<input type="range" min="0" max="' + GAME_CONFIG.budget + '" value="0" data-id="' + cat.id + '">' +
+      '<span class="value" data-val="' + cat.id + '">0</span>';
+    slidersEl.appendChild(row);
+  });
+
+  // Build position cards
+  var positionsEl = document.getElementById('positions');
+  GAME_CONFIG.positions.forEach(function(pos) {
+    var card = document.createElement('div');
+    card.className = 'position-card';
+    card.id = 'pos-' + pos.id;
+    card.innerHTML =
+      '<div class="pos-label">' + pos.label + '</div>' +
+      '<div class="pos-score" data-score="' + pos.id + '">0</div>' +
+      '<div class="pos-desc">' + pos.desc + '</div>';
+    positionsEl.appendChild(card);
+  });
+
+  function getTotalAllocated() {
+    var total = 0;
+    for (var id in state.allocations) total += state.allocations[id];
+    return total;
+  }
+
+  function recalcScores() {
+    state.scores = GAME_CONFIG.positions.map(function(pos, pi) {
+      var score = 0;
+      GAME_CONFIG.categories.forEach(function(cat) {
+        score += state.allocations[cat.id] * (cat.weight[pi] || 0);
+      });
+      return score;
+    });
+
+    // Find worst position
+    var worstScore = Infinity;
+    state.worstIndex = 0;
+    state.scores.forEach(function(s, i) {
+      if (s < worstScore) { worstScore = s; state.worstIndex = i; }
+    });
+
+    updateRawlsIndicator(worstScore);
+    renderScores();
+  }
+
+  function updateRawlsIndicator(worstScore) {
+    // Maximin: worst position's raw score >= rawls_threshold
+    // rawls_threshold is the minimum resource units the worst
+    // position must receive — an absolute floor, not a ratio.
+    state.isMaximin = (worstScore >= (GAME_CONFIG.rawls_threshold || 6));
+
+    var el = document.getElementById('rawls-indicator');
+    var dot = el.querySelector('.dot');
+    var label = el.querySelector('.label');
+    var worstPos = GAME_CONFIG.positions[state.worstIndex];
+
+    dot.className = 'dot ' + (state.isMaximin ? 'pass' : 'fail');
+    if (getTotalAllocated() === 0) {
+      label.textContent = 'Allocate resources to begin.';
+      dot.className = 'dot fail';
+    } else if (state.isMaximin) {
+      label.textContent = 'Maximin satisfied. Worst position (' + worstPos.label + ') scores ' + worstScore + ' (threshold: ' + GAME_CONFIG.rawls_threshold + ').';
+    } else {
+      label.textContent = 'Not maximin. ' + worstPos.label + ' scores only ' + worstScore + ' (needs ' + GAME_CONFIG.rawls_threshold + ').';
+    }
+  }
+
+  function renderScores() {
+    GAME_CONFIG.positions.forEach(function(pos, i) {
+      var card = document.getElementById('pos-' + pos.id);
+      card.querySelector('[data-score]').textContent = state.scores[i];
+      card.className = 'position-card' + (i === state.worstIndex && getTotalAllocated() > 0 ? ' worst' : '');
+    });
+  }
+
+  // Slider events
+  slidersEl.addEventListener('input', function(e) {
+    if (e.target.tagName !== 'INPUT') return;
+    var id = e.target.getAttribute('data-id');
+    state.allocations[id] = parseInt(e.target.value, 10);
+
+    // Update value display
+    var valEl = slidersEl.querySelector('[data-val="' + id + '"]');
+    if (valEl) valEl.textContent = state.allocations[id];
+
+    // Update remaining
+    var remaining = GAME_CONFIG.budget - getTotalAllocated();
+    var remEl = document.getElementById('remaining');
+    remEl.textContent = remaining;
+    remEl.className = 'remaining' + (remaining < 0 ? ' over' : '');
+
+    recalcScores();
+  });
+
+  // Initial render
+  recalcScores();
+})();
+</script>
+
+</body>
+</html>
