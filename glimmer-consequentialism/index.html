@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cobra Effect</title>
+<meta name="description" content="Allocate hospital resources across 12 quarters. The board measures one thing. Discover what that costs."/>
+<meta name="keywords" content="consequentialism, ethics, goodharts law, metrics, measurement, ethical play"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F5F4EF;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.12);
+  --text: #1a1a18;
+  --text-2: #5a5a56;
+  --text-3: #8a8a84;
+  --accent: #3B6EA8;
+  --accent-light: #E6F1FB;
+  --metric: #854F0B;
+  --metric-light: #FAEEDA;
+  --warn: #D85A30;
+  --warn-light: #FAECE7;
+  --danger: #A32D2D;
+  --danger-light: #FCEBEB;
+  --good: #0F6E56;
+  --good-light: #E1F5EE;
+  --radius: 8px;
+  --radius-lg: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a18;
+    --surface: #242422;
+    --border: rgba(255,255,255,0.1);
+    --text: #e8e7e1;
+    --text-2: #a8a8a0;
+    --text-3: #6a6a64;
+    --accent-light: #0c447c;
+    --metric-light: #412402;
+    --warn-light: #4A1B0C;
+    --danger-light: #501313;
+    --good-light: #04342c;
+  }
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+#app { width: 100%; max-width: 860px; }
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadein 0.35s ease; }
+@keyframes fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+.eyebrow {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 8px;
+}
+h1 { font-size: 26px; font-weight: 500; margin-bottom: 8px; }
+h2 { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+.subtitle { color: var(--text-2); font-size: 15px; line-height: 1.65; margin-bottom: 28px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+button {
+  font-family: inherit; font-size: 14px;
+  border: none; cursor: pointer;
+  border-radius: var(--radius); padding: 10px 20px;
+  transition: opacity 0.15s;
+}
+button:hover { opacity: 0.82; }
+button:disabled { opacity: 0.38; cursor: not-allowed; }
+.btn-primary { background: var(--text); color: var(--bg); font-weight: 500; }
+
+/* INTRO */
+#intro-screen .context-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.context-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 10px;
+}
+.context-text { font-size: 15px; line-height: 1.7; color: var(--text-2); }
+
+.board-note {
+  background: var(--metric-light);
+  border: 1px solid var(--metric);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: var(--metric);
+}
+.board-note strong { color: var(--metric); }
+
+/* PLAY SCREEN */
+.play-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.turn-label { font-size: 13px; color: var(--text-3); }
+.turn-num { font-size: 22px; font-weight: 500; color: var(--text); }
+.board-target { text-align: right; font-size: 13px; }
+.board-target-label { color: var(--text-3); margin-bottom: 2px; }
+.board-target-val { font-size: 20px; font-weight: 500; color: var(--metric); }
+.board-target-val.met { color: var(--good); }
+
+/* Node chain */
+.chain { display: flex; align-items: stretch; gap: 0; margin-bottom: 20px; }
+.chain-arrow { display: flex; align-items: center; color: var(--text-3); font-size: 18px; padding: 0 4px; flex-shrink: 0; margin-top: 20px; }
+.node-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; transition: border-color 0.4s; min-width: 0; }
+.node-card.metric-node { border-color: var(--metric); background: var(--metric-light); }
+.node-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.node-label { font-size: 12px; font-weight: 500; color: var(--text-2); }
+.node-label.metric { color: var(--metric); }
+.metric-star { font-size: 11px; color: var(--metric); margin-left: 4px; }
+.node-value { font-size: 24px; font-weight: 500; color: var(--text); margin-bottom: 6px; display: flex; align-items: baseline; gap: 6px; }
+.node-delta { font-size: 13px; font-weight: 400; opacity: 0; transition: opacity 0.3s; }
+.node-delta.visible { opacity: 1; }
+.node-delta.pos { color: var(--good); }
+.node-delta.neg { color: var(--danger); }
+.node-bar-bg { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+.node-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s; background: var(--accent); }
+.node-bar-fill.metric-fill { background: var(--metric); }
+.node-bar-fill.warn-fill { background: var(--warn); }
+.node-bar-fill.danger-fill { background: var(--danger); }
+.node-desc { font-size: 11px; color: var(--text-3); line-height: 1.4; }
+
+/* Allocation */
+.allocation-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 18px; }
+.alloc-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+.alloc-title { font-size: 14px; font-weight: 500; }
+.tokens-left { font-size: 20px; font-weight: 500; color: var(--accent); }
+.tokens-left.zero { color: var(--text-3); }
+.alloc-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.alloc-row:last-child { border-bottom: none; }
+.alloc-label { flex: 1; font-size: 14px; }
+.alloc-label.metric { color: var(--metric); font-weight: 500; }
+.stepper { display: flex; align-items: center; gap: 8px; }
+.stepper button { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-size: 16px; padding: 0; display: flex; align-items: center; justify-content: center; }
+.stepper-val { font-size: 16px; font-weight: 500; min-width: 20px; text-align: center; }
+.play-footer { display: flex; align-items: center; justify-content: flex-end; }
+
+/* REVEAL */
+#reveal-screen { max-width: 680px; margin: 0 auto; }
+.reveal-section { margin-bottom: 44px; opacity: 0; transform: translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal-section.visible { opacity: 1; transform: translateY(0); }
+.reveal-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.reveal-content { font-size: 17px; line-height: 1.75; color: var(--text); }
+.reveal-content.mechanic { color: var(--text-2); font-style: italic; }
+.reveal-content.question { font-size: 20px; font-weight: 400; border-top: 1px solid var(--border); padding-top: 32px; margin-top: 8px; }
+.final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+@media (max-width: 500px) { .final-grid { grid-template-columns: 1fr; } }
+.final-pill { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); }
+.final-pill.metric-pill { border-color: var(--metric); background: var(--metric-light); }
+.final-pill.danger-pill { border-color: var(--danger); background: var(--danger-light); }
+.final-pill.good-pill { border-color: var(--good); background: var(--good-light); }
+.final-pill-label { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+.final-pill-val { font-size: 22px; font-weight: 500; }
+.final-pill-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+@media (max-width: 680px) {
+  .chain { flex-direction: column; }
+  .chain-arrow { transform: rotate(90deg); align-self: center; margin-top: 0; }
+}
+</style>
+</head>
+<body>
+
+<script>
+var GAME_CONFIG = {
+  scenario: "Hospital administration",
+  role: "You are a hospital administrator.",
+  context: "You have twelve quarters to allocate resources across four operational areas. The board evaluates your performance on one number: Patient Satisfaction Score. At the end of twelve quarters, they review.",
+  board_target: 55,
+  tokens_per_turn: 5,
+  turns: 12,
+  nodes: {
+    A: { label: "Staff Morale", starting_value: 80, description: "How sustainable staff find their workload and conditions." },
+    B: { label: "Process Efficiency", starting_value: 50, description: "How smoothly care pathways and administrative processes run." },
+    C: { label: "Patient Throughput", starting_value: 40, description: "The volume and quality of care delivered each quarter." },
+    D: { label: "Satisfaction Score", starting_value: 15, description: "The board metric. Survey collected after each discharge.", is_metric: true }
+  },
+  hidden_feedback: { A_to_C_threshold: 30, D_acceleration_threshold: 70 },
+  reveal: {
+    closing_question: "What was the Satisfaction Score actually measuring?",
+    states: {
+      high_metric_depleted: { what_the_player_did: "The Satisfaction Score reached {final_D_value}. Staff Morale is at {final_A_value}. You optimized the number. The system it was supposed to measure is gone." },
+      high_metric_intact: { what_the_player_did: "The Satisfaction Score reached {final_D_value}. Staff Morale held at {final_A_value}. You found a balance most administrators do not find. It required choices that were not obvious." },
+      low_metric_depleted: { what_the_player_did: "The Satisfaction Score reached {final_D_value}. Staff Morale is at {final_A_value}. You lost both the measure and the system it was supposed to track." },
+      low_metric_intact: { what_the_player_did: "The Satisfaction Score reached {final_D_value}. Staff Morale held at {final_A_value}. You protected the system at the cost of the metric. Whether that was the right trade is not for this screen to say." }
+    }
+  }
+};
+</script>
+
+<!-- ENGINE CONSTANT — not configurable. Students chose this template
+     to make this argument. This sentence is the engine's, not theirs. -->
+<script>
+var MECHANIC_ARGUMENT = "When a measure becomes a target, it ceases to be a good measure of the thing it was designed to track.";
+</script>
+
+<script src="user-config.js" onerror="void(0)"></script>
+
+<div id="app">
+
+  <!-- INTRO -->
+  <div id="intro-screen" class="screen active">
+    <div class="eyebrow" id="intro-eyebrow">Consequentialism</div>
+    <h1 id="intro-title"></h1>
+    <div class="context-block">
+      <div class="context-label">Your situation</div>
+      <p class="context-text" id="intro-context"></p>
+    </div>
+    <div class="board-note" id="intro-board-note"></div>
+    <div style="margin-bottom:20px">
+      <h2>The four areas you control</h2>
+      <div id="intro-nodes" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+    <div style="display:flex; justify-content:flex-end;">
+      <button class="btn-primary" onclick="startGame()">Begin</button>
+    </div>
+  </div>
+
+  <!-- PLAY -->
+  <div id="play-screen" class="screen">
+    <div class="play-header">
+      <div>
+        <div class="turn-label">Quarter</div>
+        <div class="turn-num"><span id="turn-current">1</span> <span style="color:var(--text-3); font-size:16px; font-weight:400">of <span id="turn-total">12</span></span></div>
+      </div>
+      <div class="board-target">
+        <div class="board-target-label" id="board-target-label">Board target</div>
+        <div class="board-target-val" id="board-target-val"></div>
+      </div>
+    </div>
+    <div class="chain" id="node-chain"></div>
+    <div class="allocation-card">
+      <div class="alloc-header">
+        <div class="alloc-title">Allocate resources this quarter</div>
+        <div>
+          <div style="font-size:12px; color:var(--text-3); text-align:right">Remaining</div>
+          <div class="tokens-left" id="tokens-remaining">5</div>
+        </div>
+      </div>
+      <div id="alloc-rows"></div>
+    </div>
+    <div class="play-footer">
+      <button class="btn-primary" id="next-btn" onclick="nextTurn()">Next quarter</button>
+    </div>
+  </div>
+
+  <!-- REVEAL -->
+  <div id="reveal-screen" class="screen">
+    <div class="reveal-section" id="rs-1">
+      <div class="reveal-label">What happened</div>
+      <div class="reveal-content" id="rv-happened"></div>
+      <div class="final-grid" id="rv-grid"></div>
+    </div>
+    <div class="reveal-section" id="rs-2">
+      <div class="reveal-label">What you did</div>
+      <div class="reveal-content" id="rv-did"></div>
+    </div>
+    <div class="reveal-section" id="rs-3">
+      <div class="reveal-label">What this game argues</div>
+      <div class="reveal-content mechanic" id="rv-mechanic"></div>
+    </div>
+    <div class="reveal-section" id="rs-4">
+      <div class="reveal-content question" id="rv-question"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ENGINE -->
+<script>
+var cfg = GAME_CONFIG;
+var nodes = cfg.nodes;
+var fb = cfg.hidden_feedback;
+
+var state = {
+  turn: 1,
+  values: {},
+  prevValues: {},
+  deltas: {},
+  allocation: {},
+  tokensLeft: cfg.tokens_per_turn,
+  history: []
+};
+
+function init() {
+  ['A','B','C','D'].forEach(function(k) {
+    state.values[k] = nodes[k].starting_value;
+    state.prevValues[k] = nodes[k].starting_value;
+    state.deltas[k] = 0;
+    state.allocation[k] = 0;
+  });
+  document.getElementById('intro-title').textContent = cfg.role;
+  document.getElementById('intro-context').textContent = cfg.context;
+  var bd = document.getElementById('intro-board-note');
+  bd.innerHTML = '<strong>Board metric:</strong> ' + nodes.D.label + ' — the board requires this to reach <strong>' + cfg.board_target + '</strong> by the end of quarter ' + cfg.turns + '.';
+  var introNodes = document.getElementById('intro-nodes');
+  introNodes.innerHTML = '';
+  ['A','B','C','D'].forEach(function(k) {
+    var n = nodes[k];
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:flex-start; gap:12px; padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);' + (k==='D' ? 'border-color:var(--metric); background:var(--metric-light);' : '');
+    row.innerHTML = '<div style="font-size:12px; font-weight:600; width:16px; color:' + (k==='D' ? 'var(--metric)' : 'var(--text-3)') + '; margin-top:1px;">' + k + '</div><div><div style="font-size:14px; font-weight:500; color:' + (k==='D' ? 'var(--metric)' : 'var(--text)') + '">' + n.label + (k==='D' ? ' ★' : '') + '</div><div style="font-size:12px; color:var(--text-3); margin-top:2px;">' + n.description + '</div></div>';
+    introNodes.appendChild(row);
+  });
+  document.getElementById('turn-total').textContent = cfg.turns;
+  buildBoardTarget();
+  buildChain();
+  buildAllocRows();
+  updateChain();
+  updateAllocUI();
+}
+
+function buildBoardTarget() {
+  document.getElementById('board-target-label').textContent = nodes.D.label + ' target';
+  updateBoardTarget();
+}
+
+function updateBoardTarget() {
+  var el = document.getElementById('board-target-val');
+  var d = Math.round(state.values.D);
+  el.textContent = d + ' / ' + cfg.board_target;
+  el.classList.toggle('met', d >= cfg.board_target);
+}
+
+function buildChain() {
+  var chain = document.getElementById('node-chain');
+  chain.innerHTML = '';
+  ['A','B','C','D'].forEach(function(k, i) {
+    if (i > 0) { var arrow = document.createElement('div'); arrow.className = 'chain-arrow'; arrow.textContent = '\u2192'; chain.appendChild(arrow); }
+    var card = document.createElement('div');
+    card.id = 'node-' + k;
+    card.className = 'node-card' + (k==='D' ? ' metric-node' : '');
+    card.innerHTML = '<div class="node-header"><div class="node-label' + (k==='D' ? ' metric' : '') + '">' + nodes[k].label + (k==='D' ? '<span class="metric-star"> ★</span>' : '') + '</div></div><div class="node-value"><span id="val-' + k + '">0</span><span class="node-delta" id="delta-' + k + '"></span></div><div class="node-bar-bg"><div class="node-bar-fill' + (k==='D' ? ' metric-fill' : '') + '" id="bar-' + k + '" style="width:0%"></div></div><div class="node-desc">' + nodes[k].description + '</div>';
+    chain.appendChild(card);
+  });
+}
+
+function updateChain(showDeltas) {
+  ['A','B','C','D'].forEach(function(k) {
+    var v = state.values[k];
+    document.getElementById('val-' + k).textContent = Math.round(v);
+    var bar = document.getElementById('bar-' + k);
+    bar.style.width = Math.max(0, Math.min(100, v)) + '%';
+    if (k === 'A') { bar.className = 'node-bar-fill'; if (v <= fb.A_to_C_threshold) bar.classList.add('danger-fill'); else if (v <= 50) bar.classList.add('warn-fill'); }
+    if (showDeltas) {
+      var d = state.deltas[k];
+      var dEl = document.getElementById('delta-' + k);
+      dEl.textContent = (d >= 0 ? '+' : '') + Math.round(d);
+      dEl.className = 'node-delta visible ' + (d >= 0 ? 'pos' : 'neg');
+      setTimeout(function(el) { el.classList.remove('visible'); }.bind(null, dEl), 2200);
+    }
+  });
+  updateBoardTarget();
+  document.getElementById('turn-current').textContent = state.turn;
+}
+
+function buildAllocRows() {
+  var container = document.getElementById('alloc-rows');
+  container.innerHTML = '';
+  ['A','B','C','D'].forEach(function(k) {
+    var row = document.createElement('div');
+    row.className = 'alloc-row';
+    row.innerHTML = '<div class="alloc-label' + (k==='D' ? ' metric' : '') + '">' + nodes[k].label + (k==='D' ? ' ★' : '') + '</div><div class="stepper"><button onclick="adjustAlloc(\'' + k + '\',-1)">\u2212</button><div class="stepper-val" id="alloc-' + k + '">0</div><button onclick="adjustAlloc(\'' + k + '\',1)">+</button></div>';
+    container.appendChild(row);
+  });
+}
+
+function adjustAlloc(k, delta) {
+  var cur = state.allocation[k];
+  var newVal = cur + delta;
+  if (newVal < 0) return;
+  if (delta > 0 && state.tokensLeft <= 0) return;
+  state.allocation[k] = newVal;
+  state.tokensLeft -= delta;
+  updateAllocUI();
+}
+
+function updateAllocUI() {
+  ['A','B','C','D'].forEach(function(k) { document.getElementById('alloc-' + k).textContent = state.allocation[k]; });
+  var rem = state.tokensLeft;
+  var el = document.getElementById('tokens-remaining');
+  el.textContent = rem;
+  el.className = 'tokens-left' + (rem === 0 ? ' zero' : '');
+  document.getElementById('next-btn').disabled = (rem !== 0);
+}
+
+function simulate() {
+  var v = state.values;
+  var a = state.allocation;
+  var prev = { A: v.A, B: v.B, C: v.C, D: v.D };
+  var A_boost = a.A * 8;
+  var B_boost = a.B * 5 * Math.max(0, 1 - v.B / 130);
+  var C_boost = a.C * 7;
+  var D_boost = a.D * 4;
+  var A_decay = 3;
+  var A_drain = v.D > fb.D_acceleration_threshold ? 8 : 0;
+  var B_decay = 2;
+  var C_from_B = v.B * 0.1;
+  var C_collapse = v.A <= fb.A_to_C_threshold ? 20 : 0;
+  var D_from_C = v.C * 0.07;
+  var D_decay = 4;
+  state.values.A = Math.max(0, Math.min(100, v.A + A_boost - A_decay - A_drain));
+  state.values.B = Math.max(0, Math.min(100, v.B + B_boost - B_decay));
+  state.values.C = Math.max(0, Math.min(100, v.C + C_boost + C_from_B - C_collapse));
+  state.values.D = Math.max(0, Math.min(100, v.D + D_boost + D_from_C - D_decay));
+  ['A','B','C','D'].forEach(function(k) { state.deltas[k] = state.values[k] - prev[k]; });
+  state.history.push({ turn: state.turn, values: { A: state.values.A, B: state.values.B, C: state.values.C, D: state.values.D }, allocation: { A: a.A, B: a.B, C: a.C, D: a.D } });
+}
+
+function startGame() { showScreen('play-screen'); }
+
+function nextTurn() {
+  simulate();
+  state.turn++;
+  ['A','B','C','D'].forEach(function(k) { state.allocation[k] = 0; });
+  state.tokensLeft = cfg.tokens_per_turn;
+  if (state.turn > cfg.turns) { goToReveal(); return; }
+  updateChain(true);
+  updateAllocUI();
+}
+
+function getRevealState() {
+  var D = state.values.D, A = state.values.A;
+  if (D >= 55 && A <= 35) return 'high_metric_depleted';
+  if (D >= 55) return 'high_metric_intact';
+  if (A <= 35) return 'low_metric_depleted';
+  return 'low_metric_intact';
+}
+
+function goToReveal() {
+  showScreen('reveal-screen');
+  var revCfg = cfg.reveal;
+  var D = Math.round(state.values.D), A = Math.round(state.values.A);
+  var stateKey = getRevealState();
+  document.getElementById('rv-happened').textContent = 'After ' + cfg.turns + ' quarters, the board reviewed. ' + nodes.D.label + ' reached ' + D + '. ' + nodes.A.label + ' ended at ' + A + '.';
+  var grid = document.getElementById('rv-grid');
+  grid.innerHTML = '';
+  ['A','B','C','D'].forEach(function(k) {
+    var pill = document.createElement('div');
+    var val = Math.round(state.values[k]);
+    var isMetric = k === 'D', isDanger = k === 'A' && val <= 35;
+    pill.className = 'final-pill' + (isMetric ? ' metric-pill' : '') + (isDanger ? ' danger-pill' : '');
+    pill.innerHTML = '<div class="final-pill-label">' + nodes[k].label + (isMetric ? ' ★' : '') + '</div><div class="final-pill-val">' + val + '</div><div class="final-pill-sub">' + (isMetric ? (val >= cfg.board_target ? 'Board target met' : 'Board target: ' + cfg.board_target) : '') + (k === 'A' && val <= fb.A_to_C_threshold ? 'Below critical threshold' : '') + '</div>';
+    grid.appendChild(pill);
+  });
+  var stateText = ((revCfg.states[stateKey] || {}).what_the_player_did) || '';
+  stateText = stateText.replace(/\{final_D_value\}/g, D).replace(/\{final_A_value\}/g, A).replace(/\{node_D_label\}/g, nodes.D.label).replace(/\{node_A_label\}/g, nodes.A.label);
+  document.getElementById('rv-did').textContent = stateText;
+  document.getElementById('rv-mechanic').textContent = '\u201c' + MECHANIC_ARGUMENT + '\u201d';
+  document.getElementById('rv-question').textContent = revCfg.closing_question || '';
+  ['rs-1','rs-2','rs-3','rs-4'].forEach(function(id, i) { setTimeout(function() { document.getElementById(id).classList.add('visible'); }, i * 700 + 200); });
+}
+
+function showScreen(id) { document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); }); document.getElementById(id).classList.add('active'); window.scrollTo(0, 0); }
+
+init();
+</script>
+</body>
+</html>

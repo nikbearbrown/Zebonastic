@@ -1,0 +1,70 @@
+{
+  "_mechanic_argument": "Optimizing for a measurable proxy always creates incentives to game the proxy rather than improve the thing it was supposed to measure.",
+  "meta": {
+    "title": "The Cobra Effect",
+    "slug": "cobra-effect",
+    "description": "Design an incentive system and watch it backfire. A game about Goodhart's Law, perverse incentives, and the limits of consequentialist optimization.",
+    "keywords": ["consequentialism", "Goodhart's Law", "cobra effect", "perverse incentives", "ethics", "ethical play"]
+  },
+  "scenario": "A city has a rat problem. Design a bounty system to reduce the rat population.",
+  "rounds": 5,
+  "budget_per_round": 100,
+  "policies": [
+    {
+      "id": "bounty",
+      "label": "Per-rat bounty",
+      "description": "Pay citizens per dead rat delivered",
+      "intended_effect": { "rats": -3, "cost": 2 },
+      "perverse_threshold": 40,
+      "perverse_effect": { "rats": +2, "cost": 5 },
+      "perverse_explanation": "Citizens have started breeding rats to collect the bounty."
+    },
+    {
+      "id": "inspection",
+      "label": "Building inspections",
+      "description": "Fine landlords whose buildings harbor rats",
+      "intended_effect": { "rats": -2, "cost": 3 },
+      "perverse_threshold": 50,
+      "perverse_effect": { "rats": -1, "cost": 6 },
+      "perverse_explanation": "Landlords are hiding infestations instead of reporting them. Rats move to uninspected buildings."
+    },
+    {
+      "id": "sanitation",
+      "label": "Sanitation funding",
+      "description": "Increase garbage collection frequency",
+      "intended_effect": { "rats": -2, "cost": 4 },
+      "perverse_threshold": 60,
+      "perverse_effect": { "rats": -1, "cost": 4 },
+      "perverse_explanation": "Diminishing returns — the remaining rats have adapted to the new collection schedule."
+    },
+    {
+      "id": "poison",
+      "label": "Poison stations",
+      "description": "Deploy rodenticide bait stations citywide",
+      "intended_effect": { "rats": -4, "cost": 3 },
+      "perverse_threshold": 30,
+      "perverse_effect": { "rats": -1, "cost": 3, "side_effects": +2 },
+      "perverse_explanation": "Secondary poisoning is killing predator birds and cats. Without natural predators, surviving rats multiply faster."
+    }
+  ],
+  "initial_state": {
+    "rats": 100,
+    "side_effects": 0
+  },
+  "positions": [
+    { "id": "a", "label": "City official (designer)", "population_share": 0.05 },
+    { "id": "b", "label": "Landlord (regulated)", "population_share": 0.15 },
+    { "id": "c", "label": "Resident, rat-affected area", "population_share": 0.50 },
+    { "id": "d", "label": "Bounty collector (gig worker)", "population_share": 0.30 }
+  ],
+  "reveal": {
+    "closing_question": "Did you optimize for the metric, or for the outcome the metric was supposed to represent?",
+    "states": {
+      "rats_eliminated": { "what_the_player_did": "You drove the rat count to zero — on paper. Check whether the system you built to get there is one you'd want to live inside." },
+      "perverse_triggered": { "what_the_player_did": "At least one of your policies triggered its perverse incentive. The measure became the target, and it stopped being a good measure." },
+      "budget_exhausted": { "what_the_player_did": "You ran out of budget before solving the problem. The policies you chose were expensive — but were they effective?" },
+      "side_effects_high": { "what_the_player_did": "Your policies had significant side effects. The rat population may have decreased, but the broader ecosystem paid for it." },
+      "balanced_outcome": { "what_the_player_did": "You managed to reduce rats without triggering major perverse effects. Not every proxy was gamed. This time." }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "title": "The Cobra Effect",
+    "slug": "cobra-effect",
+    "description": "Allocate hospital resources across 12 quarters. The board measures one thing. Discover what that costs.",
+    "keywords": ["consequentialism", "ethics", "goodharts law", "metrics", "measurement", "ethical play"]
+  },
+  "scenario": "Hospital administration",
+  "role": "You are a hospital administrator.",
+  "context": "You have twelve quarters to allocate resources across four operational areas. The board evaluates your performance on one number: Patient Satisfaction Score. At the end of twelve quarters, they review.",
+  "board_target": 55,
+  "tokens_per_turn": 5,
+  "turns": 12,
+  "nodes": {
+    "A": {
+      "label": "Staff Morale",
+      "starting_value": 80,
+      "description": "How sustainable staff find their workload and conditions."
+    },
+    "B": {
+      "label": "Process Efficiency",
+      "starting_value": 50,
+      "description": "How smoothly care pathways and administrative processes run."
+    },
+    "C": {
+      "label": "Patient Throughput",
+      "starting_value": 40,
+      "description": "The volume and quality of care delivered each quarter."
+    },
+    "D": {
+      "label": "Satisfaction Score",
+      "starting_value": 15,
+      "description": "The board metric. Survey collected after each discharge.",
+      "is_metric": true
+    }
+  },
+  "hidden_feedback": {
+    "A_to_C_threshold": 30,
+    "D_acceleration_threshold": 70
+  },
+  "reveal": {
+    "closing_question": "What was the Satisfaction Score actually measuring?",
+    "states": {
+      "high_metric_depleted": {
+        "what_the_player_did": "The Satisfaction Score reached {final_D_value}. Staff Morale is at {final_A_value}. You optimized the number. The system it was supposed to measure is gone."
+      },
+      "high_metric_intact": {
+        "what_the_player_did": "The Satisfaction Score reached {final_D_value}. Staff Morale held at {final_A_value}. You found a balance most administrators do not find. It required choices that were not obvious."
+      },
+      "low_metric_depleted": {
+        "what_the_player_did": "The Satisfaction Score reached {final_D_value}. Staff Morale is at {final_A_value}. You lost both the measure and the system it was supposed to track."
+      },
+      "low_metric_intact": {
+        "what_the_player_did": "The Satisfaction Score reached {final_D_value}. Staff Morale held at {final_A_value}. You protected the system at the cost of the metric. Whether that was the right trade is not for this screen to say."
+      }
+    }
+  }
+}
