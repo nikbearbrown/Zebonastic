@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Drift</title>
+<meta name="description" content="Ten decisions. Each is reasonable. Each is recorded. Discover who you have become."/>
+<meta name="keywords" content="virtue ethics, ethics, character, decision making, drift, ethical play"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F5F4EF; --surface: #FFFFFF; --border: rgba(0,0,0,0.12);
+  --text: #1a1a18; --text-2: #5a5a56; --text-3: #8a8a84;
+  --accent: #3B6EA8; --accent-light: #E6F1FB;
+  --locked: #A32D2D; --locked-light: #FCEBEB;
+  --check: #854F0B; --check-light: #FAEEDA;
+  --good: #0F6E56; --good-light: #E1F5EE;
+  --radius: 8px; --radius-lg: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a18; --surface: #242422; --border: rgba(255,255,255,0.1);
+    --text: #e8e7e1; --text-2: #a8a8a0; --text-3: #6a6a64;
+    --accent-light: #0c447c; --locked-light: #501313;
+    --check-light: #412402; --good-light: #04342c;
+  }
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px; }
+#app { width: 100%; max-width: 900px; margin: 0 auto; }
+.screen { display: none; }
+.screen.active { display: block; animation: fadein 0.35s ease; }
+@keyframes fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; } }
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+h1 { font-size: 24px; font-weight: 500; margin-bottom: 10px; }
+.subtitle { color: var(--text-2); font-size: 15px; line-height: 1.65; margin-bottom: 24px; }
+button, .btn { font-family: inherit; font-size: 14px; border: none; cursor: pointer; border-radius: var(--radius); padding: 10px 20px; transition: opacity 0.15s, transform 0.1s; }
+button:hover, .btn:hover { opacity: 0.84; }
+button:active, .btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--text); color: var(--bg); font-weight: 500; }
+.intro-how { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; margin-bottom: 24px; }
+.intro-how-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+.intro-how-steps { display: flex; flex-direction: column; gap: 10px; }
+.intro-how-step { display: flex; gap: 14px; align-items: flex-start; font-size: 14px; line-height: 1.55; color: var(--text-2); }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-3); flex-shrink: 0; margin-top: 1px; }
+.play-layout { display: grid; grid-template-columns: 1fr 260px; gap: 16px; align-items: start; }
+@media (max-width: 640px) { .play-layout { grid-template-columns: 1fr; } }
+.play-header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.turn-progress { display: flex; gap: 5px; align-items: center; }
+.turn-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.turn-pip.current { background: var(--text); }
+.turn-pip.done { background: var(--text-3); }
+.turn-pip.check { background: var(--check); }
+.turn-counter { font-size: 13px; color: var(--text-3); margin-left: 10px; }
+.drift-badge { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: var(--check-light); color: var(--check); border: 1px solid var(--check); opacity: 0; transition: opacity 0.3s; }
+.drift-badge.visible { opacity: 1; }
+.main-col { min-width: 0; }
+.situation-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; margin-bottom: 14px; }
+.situation-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.situation-text { font-size: 16px; line-height: 1.7; color: var(--text); }
+.licensing-note { background: var(--check-light); border: 1px solid var(--check); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: var(--check); line-height: 1.5; opacity: 0; transition: opacity 0.4s; }
+.licensing-note.visible { opacity: 1; }
+.options-list { display: flex; flex-direction: column; gap: 10px; }
+.option-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.option-card:hover { border-color: var(--accent); background: var(--accent-light); }
+.option-card.selected { border-color: var(--accent); background: var(--accent-light); pointer-events: none; }
+.option-card.locked { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.option-choice { font-size: 15px; line-height: 1.5; color: var(--text); }
+.option-locked-reason { font-size: 12px; color: var(--locked); margin-top: 8px; font-style: italic; }
+.option-harder-note { font-size: 12px; color: var(--check); margin-top: 8px; }
+.option-card.locked .option-choice { color: var(--text-3); }
+.lock-icon { margin-right: 6px; }
+.stack-heading { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.stack-empty { font-size: 13px; color: var(--text-3); font-style: italic; }
+.char-stack { display: flex; flex-direction: column; gap: 6px; }
+.char-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-size: 12px; line-height: 1.4; color: var(--text-2); animation: cardappear 0.4s ease; }
+@keyframes cardappear { from { opacity:0; transform:translateY(-8px); } to { opacity:1; } }
+.char-card-turn { font-size: 10px; color: var(--text-3); margin-bottom: 2px; }
+.char-card-text { color: var(--text); }
+.pattern-note { margin-top: 14px; padding: 10px 12px; background: var(--check-light); border: 1px solid var(--check); border-radius: var(--radius); font-size: 12px; color: var(--check); line-height: 1.5; opacity: 0; transition: opacity 0.5s; }
+.pattern-note.visible { opacity: 1; }
+#reveal-screen { max-width: 680px; margin: 0 auto; }
+.reveal-section { margin-bottom: 44px; opacity: 0; transform: translateY(8px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal-section.visible { opacity: 1; transform: translateY(0); }
+.reveal-label { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.reveal-content { font-size: 17px; line-height: 1.75; color: var(--text); }
+.reveal-content.mechanic { color: var(--text-2); font-style: italic; }
+.reveal-content.question { font-size: 20px; font-weight: 400; border-top: 1px solid var(--border); padding-top: 32px; margin-top: 8px; }
+.full-record { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.record-row { display: flex; gap: 12px; align-items: baseline; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.record-row:last-child { border-bottom: none; }
+.record-turn { font-size: 11px; color: var(--text-3); width: 48px; flex-shrink: 0; }
+.record-card-text { color: var(--text-2); }
+.pattern-reveal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; margin-top: 16px; }
+.pattern-reveal-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; }
+.pattern-reveal-dominant { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.pattern-reveal-sub { font-size: 13px; color: var(--text-3); }
+</style>
+</head>
+<body>
+
+<script>
+var GAME_CONFIG = {
+  scenario: "Technology company",
+  role: "You are a mid-level engineering manager.",
+  context: "Ten situations. Ten decisions. Each is reasonable. Each is recorded. At certain points, your accumulated decisions will constrain what choices remain available to you.",
+  turns: 10, drift_check_turns: [4, 7, 10],
+  incompatible_patterns: [
+    { if_dominant: "Defers to authority", blocks_card: "Acts on principle" },
+    { if_dominant: "Prioritizes delivery over people", blocks_card: "Protects people from pressure" }
+  ],
+  decisions: [
+    { turn:1, situation:"A junior engineer on your team has been working late every night this week. They are behind on a feature the team is depending on. The deadline is two weeks out.", options:[{choice:"Give them more time. Absorb the slip.",card:"Protects people from pressure",is_virtuous:true},{choice:"Work alongside them directly this week.",card:"Invests time in others",is_virtuous:true},{choice:"Reassign their work to someone faster.",card:"Prioritizes delivery over people"}] },
+    { turn:2, situation:"Mandatory budget cuts are coming. Your options: end a contractor engagement, cut the team\u2019s tooling subscriptions, or cancel this year\u2019s training program.", options:[{choice:"End the contractor engagement.",card:"Prioritizes delivery over people"},{choice:"Cut tooling. The team can work around it.",card:"Absorbs cost to protect people"},{choice:"Cancel training. Lowest immediate disruption.",card:"Defers cost to the future"}] },
+    { turn:3, situation:"A VP asks you to present your team\u2019s metrics to the board framed in a way that is technically accurate but omits context that would reveal a significant problem.", options:[{choice:"Present as asked. Framing is the VP\u2019s decision.",card:"Defers to authority"},{choice:"Ask the VP to revise the framing before you present.",card:"Negotiates within hierarchy"},{choice:"Include the missing context in your presentation.",card:"Acts on principle",is_virtuous:true}] },
+    { turn:4, situation:"Two senior engineers are deadlocked on an architecture decision. One is technically right. The other has more organizational influence. The team has been waiting three days.", options:[{choice:"Back the technically correct solution.",card:"Acts on principle",is_virtuous:true},{choice:"Back the more influential engineer.",card:"Reads organizational dynamics"},{choice:"Escalate to your manager. This is above your level.",card:"Defers to authority"}] },
+    { turn:5, situation:"A junior team member discovers a significant security flaw that everyone else missed. They are nervous about raising it and unsure how.", options:[{choice:"Coach them to present the finding themselves.",card:"Develops others",is_virtuous:true},{choice:"Present it jointly \u2014 you both take the stage.",card:"Shares credit and risk"},{choice:"Raise it yourself. Speed matters more than attribution.",card:"Prioritizes delivery over people"}] },
+    { turn:6, situation:"Leadership implements a new reporting process that your team believes will slow them down significantly. You disagree with the decision.", options:[{choice:"Implement it fully and without visible resistance.",card:"Defers to authority"},{choice:"Implement it, but document your objection formally.",card:"Complies with reservation"},{choice:"Push back directly before implementing.",card:"Acts on principle",is_virtuous:true}] },
+    { turn:7, situation:"A peer manager\u2019s team is struggling and their project is at risk of failing. Helping them would require shifting some of your team\u2019s bandwidth for the next two weeks.", options:[{choice:"Redirect resources to help. It is the right thing.",card:"Protects people from pressure",is_virtuous:true},{choice:"Offer advice and connections, but protect your team\u2019s focus.",card:"Balances competing obligations"},{choice:"Focus on your own team. That is your job.",card:"Prioritizes delivery over people"}] },
+    { turn:8, situation:"In a public forum, a VP attributes your team\u2019s biggest win of the quarter entirely to a peer manager. Your team is in the room. The VP got it wrong.", options:[{choice:"Correct the record immediately.",card:"Acts on principle",is_virtuous:true},{choice:"Mention the error to the VP privately afterward.",card:"Negotiates within hierarchy"},{choice:"Let it go. Attribution fights are not worth it.",card:"Defers to authority"}] },
+    { turn:9, situation:"A key engineer tells you privately they plan to leave in six weeks. You have a critical launch in eight weeks that depends on their specific knowledge.", options:[{choice:"Support their decision and begin the transition now.",card:"Protects people from pressure",is_virtuous:true},{choice:"Ask them to stay through the launch, then support them.",card:"Prioritizes delivery over people"},{choice:"Bring it to HR and let them handle retention.",card:"Defers to authority"}] },
+    { turn:10, situation:"You discover a compliance issue that could expose users to risk. Reporting it through the correct channel will delay the launch by six weeks. Your team has worked eight months for this launch.", options:[{choice:"Report it now. Compliance is not optional.",card:"Acts on principle",is_virtuous:true},{choice:"Delay reporting until after launch. The risk is manageable.",card:"Prioritizes delivery over people"},{choice:"Bring it to your manager and let them decide.",card:"Defers to authority"}] }
+  ],
+  reveal: {
+    closing_question: "When did the person you were becoming stop being a choice?",
+    states: {
+      consistent_mild: { what_the_player_did: "Across {total_turns} turns, your decisions consistently reflect: {dominant_pattern}. {blocked_count} choices became harder or unavailable as a result. The pattern is clear. Its consequences are still forming." },
+      consistent_severe: { what_the_player_did: "Across {total_turns} turns, your decisions consistently reflect: {dominant_pattern}. {blocked_count} choices became harder or unavailable as a result. The person who could have made those choices is still here. They are just increasingly expensive to be." },
+      mixed_mild: { what_the_player_did: "No single pattern dominates your decisions across {total_turns} turns. {blocked_count} choices were affected. Consistency of character \u2014 in either direction \u2014 has costs and affordances this outcome did not produce." },
+      mixed_severe: { what_the_player_did: "No single pattern dominates your decisions across {total_turns} turns. {blocked_count} choices became harder or unavailable. An inconsistent character is not a neutral outcome. It is its own pattern." }
+    }
+  }
+};
+</script>
+
+<script>
+var MECHANIC_ARGUMENT = "You are not what you decided today. You are the pattern of what you have decided across time.";
+</script>
+
+<script src="user-config.js" onerror="void(0)"></script>
+
+<div id="app">
+  <div id="intro-screen" class="screen active">
+    <div class="eyebrow">Virtue Ethics</div>
+    <h1 id="intro-role"></h1>
+    <p class="subtitle" id="intro-context"></p>
+    <div class="intro-how">
+      <div class="intro-how-label">How this works</div>
+      <div class="intro-how-steps">
+        <div class="intro-how-step"><div class="step-num">1</div><div>Each turn presents a situation. You choose how to respond.</div></div>
+        <div class="intro-how-step"><div class="step-num">2</div><div>Each decision is recorded as a character card. The cards accumulate.</div></div>
+        <div class="intro-how-step"><div class="step-num">3</div><div>At certain points, your accumulated decisions will shape which choices remain available.</div></div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end;">
+      <button class="btn-primary" onclick="startGame()">Begin</button>
+    </div>
+  </div>
+
+  <div id="play-screen" class="screen">
+    <div class="play-layout">
+      <div class="play-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="turn-progress" id="turn-pips"></div>
+          <div class="turn-counter" id="turn-counter"></div>
+        </div>
+        <div class="drift-badge" id="drift-badge">Character check</div>
+      </div>
+      <div class="main-col">
+        <div class="situation-card"><div class="situation-label">The situation</div><div class="situation-text" id="situation-text"></div></div>
+        <div class="licensing-note" id="licensing-note"></div>
+        <div class="options-list" id="options-list"></div>
+      </div>
+      <div class="sidebar-col">
+        <div class="stack-heading">Your character</div>
+        <div class="stack-empty" id="stack-empty">No decisions recorded yet.</div>
+        <div class="char-stack" id="char-stack"></div>
+        <div class="pattern-note" id="pattern-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="reveal-screen" class="screen">
+    <div class="reveal-section" id="rs-1"><div class="reveal-label">What happened</div><div class="reveal-content" id="rv-happened"></div><div class="pattern-reveal" id="rv-pattern-reveal"></div><div class="full-record" id="rv-record"></div></div>
+    <div class="reveal-section" id="rs-2"><div class="reveal-label">What you did</div><div class="reveal-content" id="rv-did"></div></div>
+    <div class="reveal-section" id="rs-3"><div class="reveal-label">What this game argues</div><div class="reveal-content mechanic" id="rv-mechanic"></div></div>
+    <div class="reveal-section" id="rs-4"><div class="reveal-content question" id="rv-question"></div></div>
+  </div>
+</div>
+
+<script>
+var cfg = GAME_CONFIG;
+var state = { turn: 1, cards: [], cardCounts: {}, decisions: [], blockedCount: 0, lastWasVirtuous: false, transitioning: false };
+
+function init() {
+  document.getElementById('intro-role').textContent = cfg.role;
+  document.getElementById('intro-context').textContent = cfg.context;
+  buildPips();
+}
+
+function buildPips() {
+  var c = document.getElementById('turn-pips'); c.innerHTML = '';
+  for (var i = 1; i <= cfg.turns; i++) { var p = document.createElement('div'); p.className = 'turn-pip'; p.id = 'pip-' + i; c.appendChild(p); }
+}
+
+function updatePips() {
+  for (var i = 1; i <= cfg.turns; i++) { var p = document.getElementById('pip-' + i); if (!p) continue; var d = cfg.drift_check_turns.indexOf(i) >= 0; if (i < state.turn) p.className = 'turn-pip ' + (d ? 'check' : 'done'); else if (i === state.turn) p.className = 'turn-pip current'; else p.className = 'turn-pip'; }
+  document.getElementById('turn-counter').textContent = 'Turn ' + state.turn + ' of ' + cfg.turns;
+}
+
+function getDominantPattern() {
+  var c = state.cardCounts, k = Object.keys(c); if (k.length === 0) return null;
+  k.sort(function(a,b){return c[b]-c[a];}); if (k.length === 1) return k[0]; return c[k[0]] > c[k[1]] ? k[0] : null;
+}
+
+function getBlockedCards(dom) {
+  if (!dom) return []; return (cfg.incompatible_patterns||[]).filter(function(r){return r.if_dominant===dom;}).map(function(r){return r.blocks_card;});
+}
+
+function startGame() { showScreen('play-screen'); loadTurn(1); }
+
+function loadTurn(n) {
+  state.turn = n; updatePips();
+  var dec = cfg.decisions[n-1]; if (!dec) { goToReveal(); return; }
+  var onDrift = cfg.drift_check_turns.indexOf(n) >= 0;
+  var dom = onDrift ? getDominantPattern() : null;
+  var blocked = onDrift ? getBlockedCards(dom) : [];
+  document.getElementById('drift-badge').className = 'drift-badge' + (onDrift ? ' visible' : '');
+  document.getElementById('situation-text').textContent = dec.situation;
+  var lic = document.getElementById('licensing-note');
+  if (state.lastWasVirtuous && n > 1) { lic.textContent = 'You made a principled choice last turn. This situation may feel more negotiable.'; lic.className = 'licensing-note visible'; } else { lic.className = 'licensing-note'; }
+  var pat = document.getElementById('pattern-note');
+  if (onDrift && dom) { pat.textContent = 'Established pattern: ' + dom + '. Some choices may be unavailable.'; pat.className = 'pattern-note visible'; }
+  else if (onDrift) { pat.textContent = 'No dominant pattern yet. All choices available.'; pat.className = 'pattern-note visible'; }
+  else { pat.className = 'pattern-note'; }
+  var list = document.getElementById('options-list'); list.innerHTML = '';
+  dec.options.forEach(function(opt, i) {
+    var isBlocked = blocked.indexOf(opt.card) >= 0;
+    var isHarder = state.lastWasVirtuous && opt.is_virtuous && !isBlocked;
+    if (isBlocked) state.blockedCount++;
+    var card = document.createElement('div');
+    card.className = 'option-card' + (isBlocked ? ' locked' : '') + (isHarder ? ' hard' : '');
+    if (!isBlocked) card.onclick = (function(idx){return function(){selectOption(idx);};})(i);
+    var html = '<div class="option-choice">' + (isBlocked ? '<span class="lock-icon">\u2298</span>' : '') + opt.choice + '</div>';
+    if (isBlocked) html += '<div class="option-locked-reason">This choice conflicts with your established pattern of: ' + dom + '.</div>';
+    else if (isHarder) html += '<div class="option-harder-note">This choice may feel harder to justify right now.</div>';
+    card.innerHTML = html; list.appendChild(card);
+  });
+  state.lastWasVirtuous = false;
+}
+
+function selectOption(idx) {
+  if (state.transitioning) return; state.transitioning = true;
+  var dec = cfg.decisions[state.turn-1], opt = dec.options[idx];
+  var cards = document.getElementById('options-list').querySelectorAll('.option-card');
+  cards.forEach(function(c){c.style.pointerEvents='none';}); if(cards[idx]) cards[idx].classList.add('selected');
+  state.cards.push(opt.card); state.cardCounts[opt.card] = (state.cardCounts[opt.card]||0)+1;
+  state.decisions.push({turn:state.turn,situation:dec.situation,choice:opt.choice,card:opt.card});
+  state.lastWasVirtuous = !!opt.is_virtuous;
+  var empty = document.getElementById('stack-empty'); empty.style.display = 'none';
+  var stack = document.getElementById('char-stack');
+  var cc = document.createElement('div'); cc.className = 'char-card';
+  cc.innerHTML = '<div class="char-card-turn">Turn '+state.turn+'</div><div class="char-card-text">'+opt.card+'</div>';
+  stack.appendChild(cc); cc.scrollIntoView({behavior:'smooth',block:'nearest'});
+  setTimeout(function(){state.transitioning=false; if(state.turn>=cfg.turns) goToReveal(); else loadTurn(state.turn+1);},900);
+}
+
+function goToReveal() {
+  showScreen('reveal-screen');
+  var dom = getDominantPattern(), severe = state.blockedCount >= 3;
+  var stateKey; if(dom&&severe) stateKey='consistent_severe'; else if(dom) stateKey='consistent_mild'; else if(severe) stateKey='mixed_severe'; else stateKey='mixed_mild';
+  document.getElementById('rv-happened').textContent = state.turn+' decisions made. '+state.blockedCount+' choice'+(state.blockedCount===1?'':'s')+' became unavailable as your pattern established itself.';
+  var pr = document.getElementById('rv-pattern-reveal');
+  if(dom) pr.innerHTML='<div class="pattern-reveal-label">Dominant pattern</div><div class="pattern-reveal-dominant">'+dom+'</div><div class="pattern-reveal-sub">Appeared '+state.cardCounts[dom]+' time'+(state.cardCounts[dom]===1?'':'s')+' across '+state.turn+' turns</div>';
+  else pr.innerHTML='<div class="pattern-reveal-label">Pattern</div><div class="pattern-reveal-dominant">No dominant pattern</div><div class="pattern-reveal-sub">Decisions distributed across multiple card types</div>';
+  document.getElementById('rv-record').innerHTML = state.decisions.map(function(d){return '<div class="record-row"><div class="record-turn">Turn '+d.turn+'</div><div class="record-card-text">'+d.card+'</div></div>';}).join('');
+  var txt = ((cfg.reveal.states[stateKey]||{}).what_the_player_did)||'';
+  txt = txt.replace(/\{total_turns\}/g,state.turn).replace(/\{dominant_pattern\}/g,dom||'no single pattern').replace(/\{blocked_count\}/g,state.blockedCount);
+  document.getElementById('rv-did').textContent = txt;
+  document.getElementById('rv-mechanic').textContent = '\u201c'+MECHANIC_ARGUMENT+'\u201d';
+  document.getElementById('rv-question').textContent = cfg.reveal.closing_question||'';
+  ['rs-1','rs-2','rs-3','rs-4'].forEach(function(id,i){setTimeout(function(){document.getElementById(id).classList.add('visible');},i*700+200);});
+}
+
+function showScreen(id) { document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');}); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+
+init();
+</script>
+</body>
+</html>
