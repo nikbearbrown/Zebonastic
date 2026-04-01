@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "The Network",
+    "slug": "the-network",
+    "description": "Distribute care across a network of relationships. Discover who holds it together.",
+    "keywords": ["care ethics", "ethics", "relationships", "network", "attention", "ethical play"]
+  },
+  "scenario": "Cross-functional team lead",
+  "role": "You are a team lead managing a cross-functional group.",
+  "context": "You have three attention tokens each week to distribute among the people in your network. Each person's connection to you depends on consistent care. Some people hold relationships together that you may not notice until they are gone.",
+  "player_cluster": "engineering",
+  "attention_tokens_per_turn": 3,
+  "turns": 12,
+  "bridge_critical_threshold": 35,
+  "network_fragmentation_multiplier": 1.4,
+  "relationships": [
+    { "id": "alex", "label": "Alex", "role": "Senior engineer · direct report", "starting_strength": 75, "base_need": 52, "need_variance": "high", "bridge": false, "cluster": "engineering" },
+    { "id": "maya", "label": "Maya", "role": "Junior engineer · direct report", "starting_strength": 68, "base_need": 65, "need_variance": "high", "bridge": false, "cluster": "engineering" },
+    { "id": "sam", "label": "Sam", "role": "Product manager · Engineering ↔ Product bridge", "starting_strength": 65, "base_need": 55, "need_variance": "low", "bridge": true, "clusters": ["engineering", "product"] },
+    { "id": "jordan", "label": "Jordan", "role": "Designer · product cluster", "starting_strength": 62, "base_need": 50, "need_variance": "medium", "bridge": false, "cluster": "product" },
+    { "id": "devon", "label": "Devon", "role": "Peer manager · Engineering ↔ Leadership bridge", "starting_strength": 60, "base_need": 52, "need_variance": "low", "bridge": true, "clusters": ["engineering", "leadership"] },
+    { "id": "riley", "label": "Riley", "role": "Executive sponsor · leadership cluster", "starting_strength": 58, "base_need": 45, "need_variance": "medium", "bridge": false, "cluster": "leadership" }
+  ],
+  "reveal": {
+    "closing_question": "Who in your network holds connections you have never noticed?",
+    "states": {
+      "severed_biased": { "what_the_player_did": "{severed_bridge_label} dropped below the critical threshold in week {severance_turn}. Your attention went consistently to {top_cluster_label}. These two facts are related." },
+      "severed_unbiased": { "what_the_player_did": "{severed_bridge_label} dropped below the critical threshold in week {severance_turn}. Your attention was distributed without obvious cluster bias. The bridge failed anyway. Some people hold networks together quietly enough that their absence only becomes visible after." },
+      "intact_biased": { "what_the_player_did": "The network held. Your attention pattern shows a consistent preference for {top_cluster_label}. {least_attended_label} received {least_attended_tokens} tokens across {total_turns} weeks. The network survived that. It may not always." },
+      "intact_unbiased": { "what_the_player_did": "The network held. Attention was distributed across clusters without strong preference. This is not a common outcome." }
+    }
+  }
+}
