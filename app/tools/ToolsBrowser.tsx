@@ -12,17 +12,20 @@ import {
 } from '@/components/ui/card'
 import { Search, X } from 'lucide-react'
 
-interface Tool {
+export interface ToolCard {
   id: string
   name: string
-  slug: string
   description: string
-  tool_type: 'link' | 'artifact'
-  claude_url: string | null
   tags: string[]
+  source: 'filesystem' | 'database'
+  type: 'artifact' | 'link'
+  href: string
+  artifactPath?: string
+  externalUrl?: string
+  openExternal: boolean
 }
 
-export default function ToolsBrowser({ tools, filterTags = [] }: { tools: Tool[]; filterTags?: string[] }) {
+export default function ToolsBrowser({ tools, filterTags = [] }: { tools: ToolCard[]; filterTags?: string[] }) {
   const [query, setQuery] = useState('')
   const [activeTag, setActiveTag] = useState<string | null>(null)
 
@@ -105,19 +108,14 @@ export default function ToolsBrowser({ tools, filterTags = [] }: { tools: Tool[]
       ) : (
         <div className="grid gap-6 sm:grid-cols-2">
           {filtered.map((tool) => {
-            const isArtifact = tool.tool_type === 'artifact'
-            const href = isArtifact ? `/tools/${tool.slug}` : tool.claude_url
-
             const cardContent = (
               <Card className="h-full transition-shadow hover:shadow-md">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     {tool.name}
-                    {isArtifact && (
-                      <Badge variant="default" className="text-xs">
-                        Artifact
-                      </Badge>
-                    )}
+                    <Badge variant="default" className="text-xs">
+                      {tool.type === 'artifact' ? 'Artifact' : 'Link'}
+                    </Badge>
                   </CardTitle>
                   {tool.description && (
                     <CardDescription>{tool.description}</CardDescription>
@@ -137,23 +135,23 @@ export default function ToolsBrowser({ tools, filterTags = [] }: { tools: Tool[]
               </Card>
             )
 
-            if (isArtifact) {
+            if (tool.openExternal) {
               return (
-                <Link key={tool.id} href={href!}>
+                <a
+                  key={tool.id}
+                  href={tool.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {cardContent}
-                </Link>
+                </a>
               )
             }
 
             return (
-              <a
-                key={tool.id}
-                href={href || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link key={tool.id} href={tool.href}>
                 {cardContent}
-              </a>
+              </Link>
             )
           })}
         </div>

@@ -2,8 +2,9 @@ import { join } from 'path'
 import { readFileSync } from 'fs'
 import type { Metadata } from 'next'
 import { sql } from '@/lib/db'
-import { scanHtmlDir } from '@/lib/html-meta'
+import { scanArtifactsDir } from '@/lib/html-meta'
 import ToolsBrowser from './ToolsBrowser'
+import type { ToolCard } from './ToolsBrowser'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description: 'Tools directory curated by Zebonastic.',
 }
 
-interface Tool {
+interface DbTool {
   id: string
   name: string
   slug: string
@@ -24,28 +25,41 @@ interface Tool {
 
 export default async function ToolsPage() {
   // 1. Filesystem artifacts
-  const artifactDocs = scanHtmlDir(join(process.cwd(), 'public', 'artifacts'))
-  const artifactTools: Tool[] = artifactDocs.map(doc => ({
+  const artifactDocs = scanArtifactsDir(join(process.cwd(), 'public', 'artifacts'))
+  const artifactTools: ToolCard[] = artifactDocs.map(doc => ({
     id: `fs-${doc.slug}`,
     name: doc.title,
-    slug: doc.slug,
     description: doc.description,
-    tool_type: 'artifact',
-    claude_url: `/artifacts/${doc.filename}`,
     tags: doc.tags,
+    source: 'filesystem' as const,
+    type: 'artifact' as const,
+    href: `/tools/${doc.slug}`,
+    artifactPath: doc.artifactPath,
+    openExternal: false,
   }))
 
   // 2. Database link tools
-  let dbTools: Tool[] = []
+  let dbRows: DbTool[] = []
   try {
-    dbTools = await sql`SELECT * FROM tools WHERE tool_type = 'link' ORDER BY created_at DESC`
+    dbRows = await sql`SELECT * FROM tools WHERE tool_type = 'link' ORDER BY created_at DESC` as unknown as DbTool[]
   } catch (err) {
     console.error('[tools/page] Failed to fetch DB tools:', err)
   }
+  const dbTools: ToolCard[] = dbRows.map(row => ({
+    id: row.id,
+    name: row.name,
+    description: row.description || '',
+    tags: row.tags || [],
+    source: 'database' as const,
+    type: 'link' as const,
+    href: row.claude_url || '#',
+    externalUrl: row.claude_url || undefined,
+    openExternal: true,
+  }))
 
-  // 3. Merge, deduplicate by slug (filesystem wins)
-  const slugSet = new Set(artifactTools.map(t => t.slug))
-  const linkTools = dbTools.filter(t => !slugSet.has(t.slug))
+  // 3. Merge, deduplicate by id prefix (filesystem wins)
+  const fsNames = new Set(artifactTools.map(t => t.name))
+  const linkTools = dbTools.filter(t => !fsNames.has(t.name))
   const allTools = [...artifactTools, ...linkTools]
 
   // Read curated filter tags from filters.json

@@ -3,16 +3,23 @@ import { notFound } from 'next/navigation'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { sql } from '@/lib/db'
-import { scanHtmlDir } from '@/lib/html-meta'
+import { scanArtifactsDir } from '@/lib/html-meta'
 
 export const dynamic = 'force-dynamic'
 
-function getArtifactDoc(slug: string) {
+function resolveFilesystemArtifact(slug: string) {
   const dir = join(process.cwd(), 'public', 'artifacts')
-  const filePath = join(dir, `${slug}.html`)
-  if (!existsSync(filePath)) return null
-  const docs = scanHtmlDir(dir)
-  return docs.find(d => d.slug === slug) || null
+  // Flat file first: public/artifacts/[slug].html
+  if (existsSync(join(dir, `${slug}.html`))) {
+    const docs = scanArtifactsDir(dir)
+    return docs.find(d => d.slug === slug) || null
+  }
+  // Directory artifact: public/artifacts/[slug]/index.html
+  if (existsSync(join(dir, slug, 'index.html'))) {
+    const docs = scanArtifactsDir(dir)
+    return docs.find(d => d.slug === slug) || null
+  }
+  return null
 }
 
 export async function generateMetadata({
@@ -23,7 +30,7 @@ export async function generateMetadata({
   const { slug } = await params
 
   // Check filesystem first
-  const doc = getArtifactDoc(slug)
+  const doc = resolveFilesystemArtifact(slug)
   if (doc) {
     return {
       title: `${doc.title} - Zebonastic Tools`,
@@ -53,7 +60,7 @@ export default async function ToolPage({
   const { slug } = await params
 
   // Check filesystem first
-  const doc = getArtifactDoc(slug)
+  const doc = resolveFilesystemArtifact(slug)
   if (doc) {
     return (
       <div className="flex flex-col w-full" style={{ minHeight: 'calc(100vh - 4rem)' }}>
@@ -73,7 +80,7 @@ export default async function ToolPage({
         </div>
         <div className="flex-1 w-full">
           <iframe
-            src={`/artifacts/${doc.filename}`}
+            src={doc.artifactPath}
             title={doc.title}
             className="w-full border-none"
             style={{ minHeight: 'calc(100vh - 12rem)' }}
