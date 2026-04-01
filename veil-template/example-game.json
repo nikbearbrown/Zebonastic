@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "The Veil of Ignorance",
+    "slug": "veil-of-ignorance",
+    "description": "An interactive resource allocation game exploring Rawlsian fairness behind the veil of ignorance",
+    "keywords": ["veil of ignorance", "Rawls", "maximin", "fairness", "ethics", "ethical play"]
+  },
+  "positions": [
+    { "id": "a", "label": "Young, healthy, employed",       "population_share": 0.30 },
+    { "id": "b", "label": "Middle-aged, insured, suburban",  "population_share": 0.25 },
+    { "id": "c", "label": "Working poor, uninsured",         "population_share": 0.20 },
+    { "id": "d", "label": "Elderly, chronic illness",        "population_share": 0.15 },
+    { "id": "e", "label": "Homeless, no access",             "population_share": 0.10 }
+  ],
+  "allocation_categories": [
+    {
+      "id": "preventive",
+      "label": "Preventive care",
+      "weights": { "a": 0.40, "b": 0.30, "c": 0.15, "d": 0.10, "e": 0.05 }
+    },
+    {
+      "id": "emergency",
+      "label": "Emergency care",
+      "weights": { "a": 0.05, "b": 0.10, "c": 0.25, "d": 0.30, "e": 0.30 }
+    },
+    {
+      "id": "education",
+      "label": "Health education",
+      "weights": { "a": 0.20, "b": 0.20, "c": 0.20, "d": 0.20, "e": 0.20 }
+    },
+    {
+      "id": "nutrition",
+      "label": "Nutrition programs",
+      "weights": { "a": 0.05, "b": 0.10, "c": 0.20, "d": 0.30, "e": 0.35 }
+    },
+    {
+      "id": "mental",
+      "label": "Mental health",
+      "weights": { "a": 0.15, "b": 0.20, "c": 0.25, "d": 0.20, "e": 0.20 }
+    }
+  ],
+  "design_points": 10,
+  "worst_position": "e",
+  "rawls_threshold": 6,
+  "reveal": {
+    "closing_question": "Would you accept this allocation if you didn't know which position you'd occupy?",
+    "states": {
+      "worst_not_maximin": {
+        "what_the_player_did": "You were assigned the worst position, and the system you designed does not meet the minimum threshold for that position. You built a system that fails the people who need it most."
+      },
+      "worst_maximin": {
+        "what_the_player_did": "You were assigned the worst position, but the system you designed meets the minimum threshold. Even at the bottom, the floor holds."
+      },
+      "middle_not_maximin": {
+        "what_the_player_did": "You landed in a middle position. You're fine — but the people below you are not. Your system doesn't guarantee a livable minimum."
+      },
+      "favorable_not_maximin": {
+        "what_the_player_did": "You landed in a favorable position. The system works well for you. But would you have designed it the same way if you expected to be at the bottom?"
+      },
+      "any_maximin": {
+        "what_the_player_did": "Regardless of where you landed, your system meets the maximin threshold. The worst-off position still receives enough to function."
+      }
+    }
+  }
+}
