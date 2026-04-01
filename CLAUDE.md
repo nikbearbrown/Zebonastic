@@ -36,9 +36,11 @@ Brand voice: Academic, clear, direct. Informed by research, accessible to practi
 5. `/courses/ethical-play` — Ethical Play and Moral Imagination
 6. `/courses/aimagineering` — AIMagineering: Creative Intelligence
 7. `/courses/embodied-teaching` — Embodied Teaching and Mentorship
-8. `/tools` — Tools directory (card grid, Neon-driven)
-9. `/tools/[slug]` — Artifact tool embed page (full-viewport iframe)
-10. `/dev` — Dev docs browser (searchable card grid, filesystem-driven)
+8. `/games` — Games directory (card grid, filesystem-driven from `public/games/`)
+9. `/games/[slug]` — Game embed page (full-viewport iframe)
+10. `/tools` — Tools directory (card grid, Neon-driven)
+11. `/tools/[slug]` — Artifact tool embed page (full-viewport iframe)
+12. `/dev` — Dev docs browser (searchable card grid, filesystem-driven)
 11. `/dev/[slug]` — Full-viewport iframe of a dev doc HTML file
 12. `/notes` — Notes browser (searchable card grid, grouped by folder, filesystem-driven)
 13. `/notes/[...slug]` — Full-viewport iframe of a note HTML file (e.g., `/notes/Irreducibly-Human/NEU_botspeak-syllabus`)
@@ -91,7 +93,7 @@ Teaching is irreducibly human. This course covers presence, improvisation, emoti
 
 ### Header (`/components/Header/Header.tsx`) — DONE
 - Logo: text-based "Zebonastic" in bold tracking-tighter
-- Nav: Home (`/`) | Courses (`/courses`) | Tools (`/tools`) | Dev (`/dev`) | About (`/about`) | Blog (`/blog`)
+- Nav: Home (`/`) | Blog (`/blog`) | Books (`/books`) | Dev (`/dev`) | Games (`/games`) | Notes (`/notes`) | Tools (`/tools`)
 - Social buttons (top right): GitHub (github.com/nikbearbrown/irreducibly-human), Substack (skepticism.ai), YouTube (youtube.com/@Zebonastic), Spotify (open.spotify.com/artist/0hSpFCJodAYMP2cWK72zI6) — black button style
 - Dark/light mode toggle (ThemeToggle component)
 - Mobile hamburger menu with backdrop (lg breakpoint)
@@ -172,6 +174,46 @@ CREATE POLICY "service_role_tools" ON tools FOR ALL USING (true) WITH CHECK (tru
 ### Public pages
 - `/tools` — Card grid of all tools. Artifact tools show "Artifact" badge and link to `/tools/[slug]`. Link tools open in new tab.
 - `/tools/[slug]` — Full-page artifact embed with title bar (name, description, "Back to Tools" link, optional "Open External" button). Iframe takes full viewport height minus header.
+
+## Games system — DONE
+
+### Structure
+Games are organized as subdirectories under `public/games/`, one folder per game. Each game folder contains an `index.html` entry point plus its own `js/`, `css/`, `assets/`, etc.
+
+Current games:
+- `public/games/evolution-of-trust/` — The Evolution of Trust (Nicky Case), prisoner's dilemma simulation
+
+### Adding a new game
+1. Build or generate the game directory (e.g., via `trust-template/generate.js`)
+2. Place it under `public/games/[slug]/` with an `index.html` entry point
+3. Ensure `index.html` has `<title>`, `<meta name="description">`, and `<meta name="keywords">` tags
+4. It appears automatically on `/games` — no database, no sync needed
+5. Filesystem is the source of truth
+
+### Trust template (reskin system)
+The `trust-template/` directory contains a generator for creating reskins of the Evolution of Trust game:
+- `trust-template/generate.js` — Node.js generator script
+- `trust-template/example-game.json` — Example config with all 8 strategy IDs
+- `trust-template/STUDENT-GUIDE.md` — Student-facing guide for Ethical Play course
+- `trust-source/` — Source copy of the Nicky Case trust game (local working directory, not committed)
+
+Generator usage:
+```bash
+node trust-template/generate.js <game-config-dir> <source-dir> <output-dir>
+node trust-template/generate.js <game-config-dir> <source-dir> --dry-run
+```
+
+The 8 fixed strategy IDs (all required): `tft`, `all_d`, `all_c`, `grudge`, `prober`, `tf2t`, `pavlov`, `random`
+
+Generator features: `_note` field stripping, string/array keyword normalization, strategy validation, missing-file errors, `--dry-run` mode, flag-as-path guard.
+
+### Public pages
+- `/games` — Card grid of all games. Uses `scanArtifactsDir()` against `public/games/`.
+- `/games/[slug]` — Full-viewport iframe embed with title bar, description, "Back to Games" link.
+
+### Components
+- `app/games/page.tsx` — Server component: scans `public/games/` via `scanArtifactsDir()`
+- `app/games/[slug]/page.tsx` — Game embed page with `resolveGame()` lookup
 
 ## Notes system — DONE
 
@@ -458,7 +500,7 @@ NEXT_PUBLIC_ANTHROPIC_API_KEY=   # only if embedding AI assistant directly
 ## What NOT to do
 - Do not use localStorage — use React state or sessionStorage
 - Do not add analytics or tracking beyond what's already present
-- Keep public nav to six items: Home, Courses, Tools, Dev, About, Blog
+- Keep public nav to seven items: Blog, Books, Dev, Games, Notes, Tools (plus Home logo)
 - Do not commit .env.local or credentials to git
 
 ## User Guide
@@ -611,6 +653,8 @@ app/
   blog/page.tsx                     # Blog feed (server component, fetches posts)
   blog/BlogFeed.tsx                 # Client component: search + post cards with cover images
   blog/[slug]/page.tsx              # Individual blog post
+  games/page.tsx                    # Games directory (server component, scans public/games/)
+  games/[slug]/page.tsx             # Game embed page (full-viewport iframe)
   tools/page.tsx                    # Tools directory (merges filesystem artifacts + DB link tools)
   tools/ToolsBrowser.tsx            # Client component: search + tag filter + card grid
   tools/[slug]/page.tsx             # Tool page (filesystem first, DB fallback)
