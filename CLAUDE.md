@@ -181,31 +181,49 @@ CREATE POLICY "service_role_tools" ON tools FOR ALL USING (true) WITH CHECK (tru
 Games are organized as subdirectories under `public/games/`, one folder per game. Each game folder contains an `index.html` entry point plus its own `js/`, `css/`, `assets/`, etc.
 
 Current games:
-- `public/games/evolution-of-trust/` — The Evolution of Trust (Nicky Case), prisoner's dilemma simulation
+- `public/games/evolution-of-trust/` — The Evolution of Trust (game theory, prisoner's dilemma) — Nicky Case engine
+- `public/games/veil-of-ignorance/` — Veil of Ignorance (contractarianism, Rawlsian fairness) — resource allocation engine
+- `public/games/cobra-effect/` — The Cobra Effect (consequentialism, Goodhart's Law) — hospital A→B→C→D node engine
+- `public/games/the-rule/` — The Rule (deontology, bribe escalation) — 3-offer accept/refuse engine
+- `public/games/character-drift/` — Character Drift (virtue ethics, pattern blocking) — 10-decision card accumulation engine
+- `public/games/the-network/` — The Network (care ethics, relationship fragmentation) — attention token / bridge severance engine
 
 ### Adding a new game
-1. Build or generate the game directory (e.g., via `trust-template/generate.js`)
+1. Build or generate the game directory (e.g., via a template generator)
 2. Place it under `public/games/[slug]/` with an `index.html` entry point
 3. Ensure `index.html` has `<title>`, `<meta name="description">`, and `<meta name="keywords">` tags
 4. It appears automatically on `/games` — no database, no sync needed
 5. Filesystem is the source of truth
 
-### Trust template (reskin system)
-The `trust-template/` directory contains a generator for creating reskins of the Evolution of Trust game:
-- `trust-template/generate.js` — Node.js generator script
-- `trust-template/example-game.json` — Example config with all 8 strategy IDs
-- `trust-template/STUDENT-GUIDE.md` — Student-facing guide for Ethical Play course
-- `trust-source/` — Source copy of the Nicky Case trust game (local working directory, not committed)
+### Game template generators
+Each ethical framework has its own template engine and generator. All generators follow the same pattern: `game.json` config → validate → patch `index.html` → generate `user-config.js`.
 
-Generator usage:
+| Template | Directory | Ethical Framework | Engine Mechanic |
+|----------|-----------|-------------------|-----------------|
+| Trust | `trust-template/` | Game theory | 8 fixed strategy IDs, prisoner's dilemma tournament |
+| Veil of Ignorance | `veil-template/` | Contractarianism | Resource allocation, maximin threshold |
+| Cobra Effect | `glimmer-consequentialism/` | Consequentialism | 4-node chain (A→B→C→D), hidden feedback loops |
+| The Rule | `glimmer-deontology/` | Deontology | Escalating inducements, fixed penalty |
+| Character Drift | `glimmer-virtue/` | Virtue ethics | Card accumulation, drift checks, pattern blocking |
+| The Network | `glimmer-care/` | Care ethics | Attention tokens, bridge severance, cluster fragmentation |
+
+Common generator flags: `--validate`, `--dry-run`, `--nextjs <path>`
+
+Generator usage (all templates):
 ```bash
-node trust-template/generate.js <game-config-dir> <source-dir> <output-dir>
-node trust-template/generate.js <game-config-dir> <source-dir> --dry-run
+node <template>/generate.js <input-dir> <template>/index.html --validate
+node <template>/generate.js <input-dir> <template>/index.html --nextjs .
+node <template>/generate.js <input-dir> <template>/index.html --dry-run
 ```
 
-The 8 fixed strategy IDs (all required): `tft`, `all_d`, `all_c`, `grudge`, `prober`, `tf2t`, `pavlov`, `random`
+### Engine constants
+Each game engine has a `MECHANIC_ARGUMENT` — a fixed string that represents the ethical argument the template makes. This is NOT in `GAME_CONFIG` and NOT student-configurable. Students choose which template to use; the engine's argument is the template's, not theirs. If `_mechanic_argument` appears in `game.json`, generators strip it with a warning.
 
-Generator features: `_note` field stripping, string/array keyword normalization, strategy validation, missing-file errors, `--dry-run` mode, flag-as-path guard.
+### Trust template specifics
+- `trust-template/STUDENT-GUIDE.md` — Student-facing reskin guide for Ethical Play course
+- `trust-source/` — Source copy of the Nicky Case trust game (local working directory, not committed)
+- The 8 fixed strategy IDs (all required): `tft`, `all_d`, `all_c`, `grudge`, `prober`, `tf2t`, `pavlov`, `random`
+- Generator features: `_note` field stripping, string/array keyword normalization, strategy validation, missing-file errors
 
 ### Public pages
 - `/games` — Card grid of all games. Uses `scanArtifactsDir()` against `public/games/`.
